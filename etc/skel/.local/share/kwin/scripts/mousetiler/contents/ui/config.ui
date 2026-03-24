@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1250</width>
-    <height>886</height>
+    <width>1378</width>
+    <height>954</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -131,7 +131,14 @@
           <item>
            <widget class="QCheckBox" name="kcfg_allowTransient">
             <property name="text">
-             <string>Allow tiling of transient windows (certain confirmation dialogs, toolbars, and other temporary sub-windows apps might create).</string>
+             <string>Allow tiling of transient windows (certain confirmation dialogs, toolbars, and other temporary sub-windows apps might create - some are transient, some are modal, some are both, and some are none of the two).</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="kcfg_allowModal">
+            <property name="text">
+             <string>Allow tiling of modal windows (certain confirmation dialogs, toolbars, and other temporary sub-windows apps might create - some are transient, some are modal, some are both, and some are none of the two).</string>
             </property>
            </widget>
           </item>
@@ -287,14 +294,14 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
+            <item row="3" column="0">
              <widget class="QLabel" name="label_43">
               <property name="text">
                <string>Moved window visibility</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
+            <item row="3" column="1">
              <widget class="QComboBox" name="kcfg_windowVisibility">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -315,6 +322,33 @@
               <item>
                <property name="text">
                 <string>Hidden while above tiler</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_109">
+              <property name="text">
+               <string>Display as</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QComboBox" name="kcfg_displayAs">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <item>
+               <property name="text">
+                <string>Window - Uses system &quot;Window open/close&quot; animation. Highest level of compatibility (such as with IMEs).</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Popup - Shows the tiler without additional system animations. Might cause issues with IMEs (if you use Asian languages) and possibly other features.</string>
                </property>
               </item>
              </widget>
@@ -1244,7 +1278,7 @@
           <item>
            <widget class="QLabel" name="label_10">
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Virtual Desktop Manager&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Virtual Desktop Manager&lt;/span&gt;: Configure if the Virtual Desktop Manager should be visible and how it should behave.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
@@ -1367,6 +1401,123 @@
            <widget class="QCheckBox" name="kcfg_autoRemoveEmptyVirtualDesktops">
             <property name="text">
              <string>Auto-remove empty virtual desktops - triggered when the last window on a virtual desktop is closed or when a window is moved - will never remove the first virtual desktop</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_17">
+         <property name="title">
+          <string/>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_28">
+          <item>
+           <widget class="QLabel" name="label_104">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Window Suggestions&lt;/span&gt;: Configure if suggestions should be automatically shown for other tiles, and which windows should be suggested. Suggestions are only available for regular tiles.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QFormLayout" name="formLayout_10">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_105">
+              <property name="text">
+               <string>Suggestion visibility</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QComboBox" name="kcfg_suggestionsVisibility">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <item>
+               <property name="text">
+                <string>Remember last visibility</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Visible unless toggled off (need to be toggled off each time)</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Hidden unless toggled on (needs to be toggled on before each tiling)</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_108">
+              <property name="text">
+               <string>Show suggestions</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QComboBox" name="kcfg_suggestionsMode">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <item>
+               <property name="text">
+                <string>Inside the tile to place the window in</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>In a separate window next to the tile</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="kcfg_suggestOtherScreens">
+            <property name="text">
+             <string>Suggest windows from other screens</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="kcfg_suggestOtherDesktops">
+            <property name="text">
+             <string>Suggest windows from other desktops</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="kcfg_suggestOtherActivities">
+            <property name="text">
+             <string>Suggest windows from other activities</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="kcfg_suggestAutoTiled">
+            <property name="text">
+             <string>Suggest auto tiled windows</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="kcfg_suggestMinimized">
+            <property name="text">
+             <string>Suggest minimized windows</string>
             </property>
            </widget>
           </item>
@@ -1556,191 +1707,8 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="3">
-            <widget class="Line" name="line_9">
-             <property name="orientation">
-              <enum>Qt::Orientation::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="2">
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
-             <property name="topMargin">
-              <number>6</number>
-             </property>
-             <item alignment="Qt::AlignmentFlag::AlignTop">
-              <widget class="QCheckBox" name="kcfg_hintChangeMode">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="2" column="2">
-            <widget class="Line" name="line_15">
-             <property name="orientation">
-              <enum>Qt::Orientation::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="3">
-            <widget class="QLabel" name="label_13">
-             <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle between &amp;quot;&lt;span style=&quot; font-weight:700;&quot;&gt;Popup Grid&lt;/span&gt;&amp;quot; and &amp;quot;&lt;span style=&quot; font-weight:700;&quot;&gt;Overlay&lt;/span&gt;&amp;quot; modes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="wordWrap">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="12" column="3">
-            <widget class="QLabel" name="label_96">
-             <property name="text">
-              <string>Scroll infinitely in carousel layouts, otherwise scroll if there are more windows than the layout can fit.</string>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="0">
-            <widget class="QLabel" name="label_46">
-             <property name="text">
-              <string>Mouse Tiler: Toggle Input Type</string>
-             </property>
-            </widget>
-           </item>
-           <item row="16" column="0">
-            <widget class="Line" name="line">
-             <property name="orientation">
-              <enum>Qt::Orientation::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="16" column="1">
-            <widget class="Line" name="line_5">
-             <property name="orientation">
-              <enum>Qt::Orientation::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="12" column="0">
-            <widget class="QLabel" name="label_93">
-             <property name="text">
-              <string>Mouse Tiler: Auto Tiler - Scroll To Next Window</string>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="1" alignment="Qt::AlignmentFlag::AlignTop">
-            <widget class="QLineEdit" name="kcfg_shortcutInputType">
-             <property name="font">
-              <font>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Ctrl+Alt+I</string>
-             </property>
-            </widget>
-           </item>
-           <item row="16" column="3">
-            <widget class="Line" name="line_6">
-             <property name="orientation">
-              <enum>Qt::Orientation::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
            <item row="2" column="0">
             <widget class="Line" name="line_3">
-             <property name="orientation">
-              <enum>Qt::Orientation::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="1" alignment="Qt::AlignmentFlag::AlignTop">
-            <widget class="QLineEdit" name="kcfg_shortcutShowAllSpan">
-             <property name="font">
-              <font>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Ctrl+Space</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_12">
-             <property name="topMargin">
-              <number>6</number>
-             </property>
-             <item>
-              <widget class="QLabel" name="label_9">
-               <property name="text">
-                <string>Mouse Tiler: Show All/Toggle Span</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="10" column="3">
-            <widget class="QLabel" name="label_70">
-             <property name="text">
-              <string>Toggle between moving to the new, or going back to the previous virtual desktop.</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2">
-            <widget class="QLabel" name="label_68">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Show Hint&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignmentFlag::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="13" column="1">
-            <widget class="QLineEdit" name="lineEdit_3">
-             <property name="font">
-              <font>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Ctrl+Alt+A</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="Line" name="line_8">
-             <property name="orientation">
-              <enum>Qt::Orientation::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="3">
-            <widget class="QLabel" name="label_49">
-             <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle between &amp;quot;&lt;span style=&quot; font-weight:700;&quot;&gt;Mouse&lt;/span&gt;&amp;quot; and &amp;quot;&lt;span style=&quot; font-weight:700;&quot;&gt;Window&lt;/span&gt;&amp;quot; input types.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item row="16" column="2">
-            <widget class="Line" name="line_16">
              <property name="orientation">
               <enum>Qt::Orientation::Horizontal</enum>
              </property>
@@ -1761,6 +1729,196 @@
              </property>
              <property name="text">
               <string>Meta+Ctrl+C</string>
+             </property>
+            </widget>
+           </item>
+           <item row="15" column="0">
+            <widget class="QLabel" name="label_101">
+             <property name="text">
+              <string>Mouse Tiler: Change To Next Auto Tiler</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="3">
+            <widget class="QLabel" name="label_49">
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle between &amp;quot;&lt;span style=&quot; font-weight:700;&quot;&gt;Mouse&lt;/span&gt;&amp;quot; and &amp;quot;&lt;span style=&quot; font-weight:700;&quot;&gt;Window&lt;/span&gt;&amp;quot; input types.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item row="13" column="0">
+            <widget class="QLabel" name="label_94">
+             <property name="text">
+              <string>Mouse Tiler: Toggle Auto Tile For Active Window</string>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="3">
+            <widget class="QLabel" name="label_70">
+             <property name="text">
+              <string>Toggle between moving to the new, or going back to the previous virtual desktop.</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="QLabel" name="label_19">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>5</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Description&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1" alignment="Qt::AlignmentFlag::AlignTop">
+            <widget class="QLineEdit" name="kcfg_shortcutChangeMode">
+             <property name="font">
+              <font>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Meta+Ctrl+Space</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="2">
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <property name="topMargin">
+              <number>6</number>
+             </property>
+             <item alignment="Qt::AlignmentFlag::AlignTop">
+              <widget class="QCheckBox" name="kcfg_hintShowAllSpan">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="11" column="3">
+            <widget class="QLabel" name="label_95">
+             <property name="text">
+              <string>Scroll infinitely in carousel layouts, otherwise scroll if there are more windows than the layout can fit.</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="Line" name="line_2">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="Line" name="line_7">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="14" column="0">
+            <widget class="QLabel" name="label_99">
+             <property name="text">
+              <string>Mouse Tiler: Change To Previous Auto Tiler</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="label_46">
+             <property name="text">
+              <string>Mouse Tiler: Toggle Input Type</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLabel" name="label_68">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Show Hint&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="15" column="1">
+            <widget class="QLineEdit" name="lineEdit_6">
+             <property name="font">
+              <font>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Ctrl+Alt+C</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="Line" name="line_15">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="0">
+            <widget class="QLabel" name="label_60">
+             <property name="text">
+              <string>Mouse Tiler: Toggle Center In Tile</string>
+             </property>
+            </widget>
+           </item>
+           <item row="17" column="0">
+            <widget class="Line" name="line">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="2">
+            <layout class="QHBoxLayout" name="horizontalLayout_10">
+             <property name="topMargin">
+              <number>6</number>
+             </property>
+             <item alignment="Qt::AlignmentFlag::AlignTop">
+              <widget class="QCheckBox" name="kcfg_hintInputType">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="3" column="3">
+            <widget class="QLabel" name="label_13">
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle between &amp;quot;&lt;span style=&quot; font-weight:700;&quot;&gt;Popup Grid&lt;/span&gt;&amp;quot; and &amp;quot;&lt;span style=&quot; font-weight:700;&quot;&gt;Overlay&lt;/span&gt;&amp;quot; modes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -1787,48 +1945,75 @@
              </item>
             </layout>
            </item>
-           <item row="13" column="3">
-            <widget class="QLabel" name="label_97">
-             <property name="text">
-              <string>Toggle auto tiling on or off. If no window is currently auto-tiled, SPECIAL_AUTO_TILER_1 layout will be used.</string>
+           <item row="17" column="3">
+            <widget class="Line" name="line_6">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
             </widget>
            </item>
-           <item row="14" column="0">
-            <widget class="QLabel" name="label_99">
-             <property name="text">
-              <string>Mouse Tiler: Change To Previous Auto Tiler</string>
+           <item row="10" column="2">
+            <layout class="QHBoxLayout" name="horizontalLayout_14">
+             <property name="topMargin">
+              <number>6</number>
              </property>
-            </widget>
+             <item alignment="Qt::AlignmentFlag::AlignTop">
+              <widget class="QCheckBox" name="kcfg_hintMoveOnDrop">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
-           <item row="6" column="3">
-            <widget class="QLabel" name="label_16">
-             <property name="text">
-              <string>Show or hide the mouse tiler. Useful if you just want to move a window without tiling it.</string>
-             </property>
-            </widget>
-           </item>
-           <item row="11" column="3">
-            <widget class="QLabel" name="label_95">
-             <property name="text">
-              <string>Scroll infinitely in carousel layouts, otherwise scroll if there are more windows than the layout can fit.</string>
-             </property>
-            </widget>
-           </item>
-           <item row="10" column="1" alignment="Qt::AlignmentFlag::AlignTop">
-            <widget class="QLineEdit" name="kcfg_shortcutMoveOnDrop">
+           <item row="6" column="1" alignment="Qt::AlignmentFlag::AlignTop">
+            <widget class="QLineEdit" name="kcfg_shortcutVisibility">
              <property name="font">
               <font>
                <bold>true</bold>
               </font>
              </property>
              <property name="text">
-              <string>Meta+Ctrl+V</string>
+              <string>Meta+Space</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_17">
+           <item row="15" column="3">
+            <widget class="QLabel" name="label_102">
+             <property name="text">
+              <string>Change to previous auto-tiler. Does not loop.</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="label_11">
+             <property name="text">
+              <string>Mouse Tiler: Toggle Visibility</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="Line" name="line_8">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="17" column="2">
+            <widget class="Line" name="line_16">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="label_18">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                <horstretch>1</horstretch>
@@ -1836,17 +2021,22 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Default Shortcut&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignmentFlag::AlignCenter</set>
              </property>
             </widget>
            </item>
-           <item row="0" column="2">
-            <widget class="Line" name="line_17">
-             <property name="orientation">
-              <enum>Qt::Orientation::Horizontal</enum>
+           <item row="13" column="1">
+            <widget class="QLineEdit" name="lineEdit_3">
+             <property name="font">
+              <font>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Ctrl+Alt+A</string>
              </property>
             </widget>
            </item>
@@ -1870,46 +2060,112 @@
              </item>
             </layout>
            </item>
-           <item row="6" column="0">
-            <widget class="QLabel" name="label_11">
-             <property name="text">
-              <string>Mouse Tiler: Toggle Visibility</string>
-             </property>
-            </widget>
-           </item>
-           <item row="10" column="0">
-            <widget class="QLabel" name="label_69">
-             <property name="text">
-              <string>Mouse Tiler: Toggle Move To Previous Virtual Desktop</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="Line" name="line_7">
-             <property name="orientation">
-              <enum>Qt::Orientation::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1" alignment="Qt::AlignmentFlag::AlignTop">
-            <widget class="QLineEdit" name="kcfg_shortcutChangeMode">
+           <item row="14" column="1">
+            <widget class="QLineEdit" name="lineEdit_4">
              <property name="font">
               <font>
                <bold>true</bold>
               </font>
              </property>
              <property name="text">
-              <string>Meta+Ctrl+Space</string>
+              <string>Ctrl+Alt+X</string>
              </property>
             </widget>
            </item>
-           <item row="7" column="2">
-            <layout class="QHBoxLayout" name="horizontalLayout_10">
+           <item row="6" column="3">
+            <widget class="QLabel" name="label_16">
+             <property name="text">
+              <string>Show or hide the mouse tiler. Useful if you just want to move a window without tiling it.</string>
+             </property>
+            </widget>
+           </item>
+           <item row="11" column="0">
+            <widget class="QLabel" name="label_92">
+             <property name="text">
+              <string>Mouse Tiler: Auto Tiler - Scroll To Previous Window</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1" alignment="Qt::AlignmentFlag::AlignTop">
+            <widget class="QLineEdit" name="kcfg_shortcutInputType">
+             <property name="font">
+              <font>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Ctrl+Alt+I</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1" alignment="Qt::AlignmentFlag::AlignTop">
+            <widget class="QLineEdit" name="kcfg_shortcutShowAllSpan">
+             <property name="font">
+              <font>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Ctrl+Space</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_17">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="12" column="1">
+            <widget class="QLineEdit" name="lineEdit_2">
+             <property name="font">
+              <font>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Ctrl+Alt+Right</string>
+             </property>
+            </widget>
+           </item>
+           <item row="12" column="3">
+            <widget class="QLabel" name="label_96">
+             <property name="text">
+              <string>Scroll infinitely in carousel layouts, otherwise scroll if there are more windows than the layout can fit.</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>Mouse Tiler: Show Config</string>
+             </property>
+            </widget>
+           </item>
+           <item row="14" column="3">
+            <widget class="QLabel" name="label_100">
+             <property name="text">
+              <string>Change to next auto-tiler. Does not loop.</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
              <property name="topMargin">
               <number>6</number>
              </property>
              <item alignment="Qt::AlignmentFlag::AlignTop">
-              <widget class="QCheckBox" name="kcfg_hintInputType">
+              <widget class="QCheckBox" name="kcfg_hintChangeMode">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -1923,26 +2179,24 @@
              </item>
             </layout>
            </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_7">
+           <item row="13" column="3">
+            <widget class="QLabel" name="label_97">
              <property name="text">
-              <string>Mouse Tiler: Show Config</string>
+              <string>Toggle auto tiling on or off. If no window is currently auto-tiled, SPECIAL_AUTO_TILER_1 layout will be used.</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="label_18">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>1</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+           <item row="0" column="3">
+            <widget class="Line" name="line_9">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
-             <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Default Shortcut&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignmentFlag::AlignCenter</set>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="Line" name="line_17">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -1958,6 +2212,13 @@
              </property>
             </widget>
            </item>
+           <item row="9" column="3">
+            <widget class="QLabel" name="label_62">
+             <property name="text">
+              <string>Toggle between regular tiling, and centering in tile.</string>
+             </property>
+            </widget>
+           </item>
            <item row="4" column="1" alignment="Qt::AlignmentFlag::AlignTop">
             <widget class="QLineEdit" name="lineEdit_5">
              <property name="font">
@@ -1970,27 +2231,10 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="3">
-            <widget class="QLabel" name="label_14">
+           <item row="10" column="0">
+            <widget class="QLabel" name="label_69">
              <property name="text">
-              <string>Show configuration dialog that lets you customize every detail of the tiler.</string>
-             </property>
-             <property name="wordWrap">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="3">
-            <widget class="Line" name="line_4">
-             <property name="orientation">
-              <enum>Qt::Orientation::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="9" column="0">
-            <widget class="QLabel" name="label_60">
-             <property name="text">
-              <string>Mouse Tiler: Toggle Center In Tile</string>
+              <string>Mouse Tiler: Toggle Move To Previous Virtual Desktop</string>
              </property>
             </widget>
            </item>
@@ -2014,158 +2258,111 @@
              </item>
             </layout>
            </item>
-           <item row="5" column="2">
-            <layout class="QHBoxLayout" name="horizontalLayout_8">
-             <property name="topMargin">
-              <number>6</number>
-             </property>
-             <item alignment="Qt::AlignmentFlag::AlignTop">
-              <widget class="QCheckBox" name="kcfg_hintShowAllSpan">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="10" column="2">
-            <layout class="QHBoxLayout" name="horizontalLayout_14">
-             <property name="topMargin">
-              <number>6</number>
-             </property>
-             <item alignment="Qt::AlignmentFlag::AlignTop">
-              <widget class="QCheckBox" name="kcfg_hintMoveOnDrop">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="12" column="1">
-            <widget class="QLineEdit" name="lineEdit_2">
-             <property name="font">
-              <font>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Ctrl+Alt+Right</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="3">
-            <widget class="QLabel" name="label_19">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>5</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Description&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignmentFlag::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="1" alignment="Qt::AlignmentFlag::AlignTop">
-            <widget class="QLineEdit" name="kcfg_shortcutVisibility">
-             <property name="font">
-              <font>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Meta+Space</string>
-             </property>
-            </widget>
-           </item>
-           <item row="9" column="3">
-            <widget class="QLabel" name="label_62">
-             <property name="text">
-              <string>Toggle between regular tiling, and centering in tile.</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="Line" name="line_2">
+           <item row="17" column="1">
+            <widget class="Line" name="line_5">
              <property name="orientation">
               <enum>Qt::Orientation::Horizontal</enum>
              </property>
             </widget>
            </item>
-           <item row="11" column="0">
-            <widget class="QLabel" name="label_92">
+           <item row="5" column="0">
+            <layout class="QHBoxLayout" name="horizontalLayout_12">
+             <property name="topMargin">
+              <number>6</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="label_9">
+               <property name="text">
+                <string>Mouse Tiler: Show All/Toggle Span</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="4" column="3">
+            <widget class="QLabel" name="label_14">
              <property name="text">
-              <string>Mouse Tiler: Auto Tiler - Scroll To Previous Window</string>
+              <string>Show configuration dialog that lets you customize every detail of the tiler.</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="13" column="0">
-            <widget class="QLabel" name="label_94">
-             <property name="text">
-              <string>Mouse Tiler: Toggle Auto Tile For Active Window</string>
+           <item row="2" column="3">
+            <widget class="Line" name="line_4">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
             </widget>
            </item>
-           <item row="14" column="1">
-            <widget class="QLineEdit" name="lineEdit_4">
+           <item row="12" column="0">
+            <widget class="QLabel" name="label_93">
+             <property name="text">
+              <string>Mouse Tiler: Auto Tiler - Scroll To Next Window</string>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="1" alignment="Qt::AlignmentFlag::AlignTop">
+            <widget class="QLineEdit" name="kcfg_shortcutMoveOnDrop">
              <property name="font">
               <font>
                <bold>true</bold>
               </font>
              </property>
              <property name="text">
-              <string>Ctrl+Alt+X</string>
+              <string>Meta+Ctrl+V</string>
              </property>
             </widget>
            </item>
-           <item row="14" column="3">
-            <widget class="QLabel" name="label_100">
+           <item row="16" column="0">
+            <widget class="QLabel" name="label_106">
              <property name="text">
-              <string>Change to next auto-tiler. Does not loop.</string>
+              <string>Mouse Tiler: Toggle Tiling Suggestions</string>
              </property>
             </widget>
            </item>
-           <item row="15" column="0">
-            <widget class="QLabel" name="label_101">
-             <property name="text">
-              <string>Mouse Tiler: Change To Next Auto Tiler</string>
-             </property>
-            </widget>
-           </item>
-           <item row="15" column="1">
-            <widget class="QLineEdit" name="lineEdit_6">
+           <item row="16" column="1">
+            <widget class="QLineEdit" name="kcfg_shortcutToggleTilingSuggestions">
              <property name="font">
               <font>
                <bold>true</bold>
               </font>
              </property>
              <property name="text">
-              <string>Ctrl+Alt+C</string>
+              <string>Meta+Ctrl+S</string>
              </property>
             </widget>
            </item>
-           <item row="15" column="3">
-            <widget class="QLabel" name="label_102">
+           <item row="16" column="3">
+            <widget class="QLabel" name="label_107">
              <property name="text">
-              <string>Change to previous auto-tiler. Does not loop.</string>
+              <string>Toggle suggestions for placing windows in additional tiles.</string>
              </property>
             </widget>
+           </item>
+           <item row="16" column="2">
+            <layout class="QHBoxLayout" name="horizontalLayout_16">
+             <property name="topMargin">
+              <number>6</number>
+             </property>
+             <item alignment="Qt::AlignmentFlag::AlignTop">
+              <widget class="QCheckBox" name="kcfg_hintToggleTilingSuggestions">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>
@@ -2178,7 +2375,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Meta&lt;/span&gt; key depends on your keyboard, but on most keyboards it is the Windows key.&lt;/p&gt;&lt;p&gt;Most of the shortcuts should be used while moving a window.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Meta&lt;/span&gt; key depends on your keyboard, but on most keyboards it is the Windows key. Most of the shortcuts should be used while moving a window.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
@@ -2386,7 +2583,7 @@
           <item>
            <widget class="QLabel" name="label_74">
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Auto Tiling&lt;/span&gt;: Configure the auto tilier behavior. &lt;span style=&quot; color:#ffaa00;&quot;&gt;TIP&lt;/span&gt; You can use the &lt;a href=&quot;https://rxweb.epizy.com/mousetiler/editor.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#5294e2;&quot;&gt;graphical web editor&lt;/span&gt;&lt;/a&gt; to edit layouts - but need to manually add prefixes (such as the 0: or *: )&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Auto Tiling&lt;/span&gt;: Configure the auto tilier behavior. &lt;span style=&quot; color:#ffaa00;&quot;&gt;TIP&lt;/span&gt; You can use the &lt;a href=&quot;https://rxweb.epizy.com/mousetiler/editor.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#5294e2;&quot;&gt;graphical web editor&lt;/span&gt;&lt;/a&gt; to edit layouts - but need to manually add prefixes (such as 0:, 1:, 2:, -1 or *: )&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="openExternalLinks">
              <bool>true</bool>
@@ -2396,7 +2593,7 @@
           <item>
            <widget class="QLabel" name="label_91">
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;WARNING&lt;/span&gt; Enable &amp;quot;Auto tile newly opened windows&amp;quot; at own risk especially if you got a lot of windows open. It is preferrable to manually auto tile each app/window and save/restore the auto tile status with Remember Window Positions (v5.3.1 or newer). Please report problematic apps in the #auto-tiler-problematic-apps channel on Discord so I can add them to default blacklist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffaa00;&quot;&gt;WARNING&lt;/span&gt; Add &amp;quot;Auto tile for id&amp;quot; or enable &amp;quot;Auto tile newly opened windows&amp;quot; at own risk. It should be safe now since auto-tiling received a lot of fixes and all known bugs have been fixed. But it is preferrable to manually auto tile each app/window and save/restore the auto tile status with Remember Window Positions (v5.4.1 or newer) if you can. Please report problematic apps on Discord so I can add them to default blacklist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -2406,7 +2603,7 @@
           <item>
            <widget class="QCheckBox" name="kcfg_autoTileNewWindows">
             <property name="text">
-             <string>Auto tile newly opened windows - if not enabled, you can still auto tile using your mouse or keyboard shortcut (Ctrl+Alt+A). SPECIAL_AUTO_TILER_1 is the default tiler</string>
+             <string>Auto tile newly opened windows - will auto-tile all new valid windows. If you want to auto tile per desktop, use &quot;Auto tile for id&quot; below instead. You can still auto tile using your mouse or keyboard shortcut (Ctrl+Alt+A)</string>
             </property>
            </widget>
           </item>
@@ -2420,7 +2617,7 @@
           <item>
            <widget class="QCheckBox" name="kcfg_autoTileMinimizedMaximized">
             <property name="text">
-             <string>Auto tile windows that have been manually minimized or maximized once they return to default state</string>
+             <string>Auto tile windows that have been manually minimized, maximized or set to fullscreen once they return to default state</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -2430,7 +2627,7 @@
           <item>
            <widget class="QCheckBox" name="kcfg_autoTileRestoreSize">
             <property name="text">
-             <string>Restore size after a window stops being auto tiled</string>
+             <string>Restore size (and position if possible) when a window stops being auto tiled</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -2438,14 +2635,38 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="kcfg_autoTileRestoreSizeAndPosition">
+            <property name="text">
+             <string>Restore size and position when Mouse Tiler shuts down. Applies when Mouse Tiler closes before the window (such as when reloading while changing settings). Use to make sure windows stay on screen.</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <layout class="QFormLayout" name="formLayout_9">
-            <item row="0" column="1">
+            <item row="1" column="1">
              <widget class="QLineEdit" name="kcfg_autoTileBlacklist"/>
             </item>
-            <item row="0" column="0">
+            <item row="1" column="0">
              <widget class="QLabel" name="label_90">
               <property name="text">
                <string>Black list - will not auto tile these apps (comma separated)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_103">
+              <property name="text">
+               <string>Auto tile for id (each screen+virtual desktop+activity has an unique id)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="kcfg_autoTileIds">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Will auto tile new windows on the desktop with specified id even if &amp;quot;Auto tile newly opened windows&amp;quot; is not enabled.&lt;/p&gt;&lt;p&gt;Click Ctrl+Alt+A to toggle auto tiling for current window and print id to logs. Check logs by running this command in a terminal/konsole:&lt;/p&gt;&lt;p&gt;journalctl -f | grep MouseTiler&lt;/p&gt;&lt;p&gt;Copy the ids here. Add multiple ids by separating them by a comma.&lt;/p&gt;&lt;p&gt;Each screen + virtual desktop + activity have their own unique id (screen name + desktop id + activity id smashed together into a long string).&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Example &lt;/span&gt;(2 ids, one on screen HDMI-A-1 and one on DP-1):&lt;/p&gt;&lt;p&gt;HDMI-A-11a35dac2-5432-4011-c65f-e36d11c00345f436e08c-e9df-438e-3d74-401cb56dd6bb,DP-16c35dac2-7955-4053-a66b-e36d11c00345f436e08c-e9df-438e-3d74-401cb56dd6bb&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="placeholderText">
+               <string>READ TOOLTIP. Comma separated - click Ctrl+Alt+A to toggle auto tiling for current window and print id to journalctl -f | grep MouseTiler</string>
               </property>
              </widget>
             </item>
@@ -2702,6 +2923,29 @@
         </widget>
        </item>
        <item>
+        <spacer name="verticalSpacer_7">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_4">
+      <attribute name="icon">
+       <iconset theme="text-x-generic"/>
+      </attribute>
+      <attribute name="title">
+       <string>Auto Tiling Layouts</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_26">
+       <item>
         <widget class="QGroupBox" name="groupBox_15">
          <property name="title">
           <string/>
@@ -2710,7 +2954,7 @@
           <item>
            <widget class="QLabel" name="label_81">
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Configurations used for auto tiling - three different auto tiling configurations are possible if you want to use different config on different monitors or virtual desktops. Only one configuration can be used on same screen + virtual desktop at a time - if you try to mix them, the new configuration replaces the old one. You can view instructions, predefined layouts (including pictures to give you an idea what each one does) and user submitted layouts &lt;a href=&quot;https://github.com/rxappdev/MouseTiler/blob/main/AUTOTILERGUIDE.md&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#5294e2;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Configurations used for auto tiling. Three different auto tiling configurations are possible if you want to use different config on different monitors, virtual desktops or simply toggle between them. Only one configuration can be used on same screen + virtual desktop + activity at a time - if you try to mix them, the new configuration replaces the old one. You can view instructions, predefined layouts (including pictures to give you an idea what each one does) and user submitted layouts &lt;a href=&quot;https://github.com/rxappdev/MouseTiler/blob/main/AUTOTILERGUIDE.md&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#5294e2;&quot;&gt;here&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -2740,13 +2984,13 @@
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>120</height>
+                <height>240</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>120</height>
+                <height>240</height>
                </size>
               </property>
               <property name="plainText">
@@ -2937,13 +3181,13 @@
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>120</height>
+                <height>240</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>120</height>
+                <height>240</height>
                </size>
               </property>
               <property name="plainText">
@@ -2965,13 +3209,13 @@
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>120</height>
+                <height>240</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>120</height>
+                <height>240</height>
                </size>
               </property>
               <property name="plainText">

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plasmoid-wunderground\n"
 "Report-Msgid-Bugs-To: https://github.com/k-donn/plasmoid-wunderground\n"
-"POT-Creation-Date: 2026-02-07 17:01-0600\n"
-"PO-Revision-Date: 2026-01-22 21:04+0100\n"
+"POT-Creation-Date: 2026-03-08 17:58-0500\n"
+"PO-Revision-Date: 2026-03-10 18:34+0100\n"
 "Last-Translator: Martin Eilsøe <martin@eilsoe.dk>\n"
 "Language-Team: <ll@li.org>\n"
 "Language: da_DK\n"
@@ -29,6 +29,19 @@ msgstr "Personlig Vejrstation viser"
 #: ../contents/code/pws-api.js
 msgid "Location not found"
 msgstr "Lokation ikke fundet"
+
+#: ../contents/code/utils.js
+msgid "To sunrise"
+msgstr "Til solopgang"
+
+#: ../contents/code/utils.js
+msgctxt "Daylight remaining time, keep short"
+msgid "Remaining"
+msgstr "Resterer"
+
+#: ../contents/code/utils.js
+msgid "Since sunset"
+msgstr "Siden solnedgang"
 
 #: ../contents/config/config.qml
 msgid "Station"
@@ -115,6 +128,11 @@ msgctxt "per 12 hours, please keep it short"
 msgid "/12h"
 msgstr "/12h"
 
+#. i18n strings
+#: ../contents/ui/DetailsItem.qml ../contents/ui/config/ConfigUnits.qml
+msgid "Feels like %1"
+msgstr "Føles som %1"
+
 #: ../contents/ui/DetailsItem.qml
 msgid "Wind Barb"
 msgstr "Vind barb"
@@ -127,26 +145,21 @@ msgstr "Vindretning og hastighed indikator"
 msgid "Learn more"
 msgstr "Mere info"
 
-#: ../contents/ui/DetailsItem.qml ../contents/ui/config/ConfigUnits.qml
-#: ../contents/ui/main.qml
-msgid "Wind & Gust"
-msgstr "Vind & Vindstød"
-
-#. i18n strings
-#: ../contents/ui/DetailsItem.qml ../contents/ui/config/ConfigUnits.qml
-msgid "Feels like %1"
-msgstr "Føles som %1"
-
 #: ../contents/ui/DetailsItem.qml
 msgid "Wind from: %1 (%2°)"
 msgstr "Vind fra : %1 (%2°)"
 
 #: ../contents/ui/DetailsItem.qml ../contents/ui/config/ConfigUnits.qml
+#: ../contents/ui/main.qml
+msgid "Wind & Gust"
+msgstr "Vind & Vindstød"
+
+#: ../contents/ui/DetailsItem.qml ../contents/ui/config/ConfigUnits.qml
 msgid "Dew Point"
 msgstr "Dugpunkt"
 
-#: ../contents/ui/DetailsItem.qml ../contents/ui/main.qml
-msgid "Precipitation Rate"
+#: ../contents/ui/DetailsItem.qml
+msgid "Precip Rate"
 msgstr "Nedbørsmængde"
 
 #: ../contents/ui/DetailsItem.qml ../contents/ui/main.qml
@@ -166,9 +179,8 @@ msgid "Humidity"
 msgstr "Fugtighed"
 
 #: ../contents/ui/DetailsItem.qml
-msgctxt "Short for: 'Precipitation Accumulation'"
-msgid "Precipitation Accum."
-msgstr "Nedbørsmængde akkum."
+msgid "Precip Accum"
+msgstr "Nedbør akkum."
 
 #: ../contents/ui/DetailsItem.qml ../contents/ui/main.qml
 msgid "UV"
@@ -228,20 +240,20 @@ msgstr "Brug system ikon tema:"
 
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Shown in tooltip:"
-msgstr ""
+msgstr "Vis i værktøjstips:"
 
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Station ID"
-msgstr ""
+msgstr "ID"
 
 #: ../contents/ui/config/ConfigAppearance.qml
 #: ../contents/ui/config/ConfigStation.qml
 msgid "Station Name"
-msgstr ""
+msgstr "Navn"
 
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Both"
-msgstr ""
+msgstr "Begge"
 
 #: ../contents/ui/config/ConfigAppearance.qml
 #: ../contents/ui/config/ConfigLayout.qml
@@ -251,6 +263,10 @@ msgstr "Fuld visning"
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Auto-color temperature:"
 msgstr "Aut. farve temp:"
+
+#: ../contents/ui/config/ConfigAppearance.qml
+msgid "Show blurb:"
+msgstr "Vis blurb:"
 
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Use default page:"
@@ -454,19 +470,19 @@ msgstr "Gemte vejrstationer"
 
 #: ../contents/ui/config/ConfigStation.qml
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: ../contents/ui/config/ConfigStation.qml
 msgid "Latitude"
-msgstr ""
+msgstr "Længdegr"
 
 #: ../contents/ui/config/ConfigStation.qml
 msgid "Longitude"
-msgstr ""
+msgstr "Breddegr"
 
 #: ../contents/ui/config/ConfigStation.qml
 msgid "Actions"
-msgstr ""
+msgstr "Handling"
 
 #: ../contents/ui/config/ConfigStation.qml
 msgid "Select from Map"
@@ -499,6 +515,10 @@ msgid "Week forecast date format:"
 msgstr "Uge vejrudsigt dato format:"
 
 #: ../contents/ui/config/ConfigUnits.qml
+msgid "Sun/Moon time format:"
+msgstr "Sol/Måne tidsformat:"
+
+#: ../contents/ui/config/ConfigUnits.qml
 msgid "Precision"
 msgstr "Præcision"
 
@@ -508,7 +528,7 @@ msgstr "Temperatur"
 
 #: ../contents/ui/config/ConfigUnits.qml
 msgid "Compact Rep Temperature"
-msgstr ""
+msgstr "Kompakt rep. temp."
 
 #: ../contents/ui/config/ConfigUnits.qml
 msgctxt "The unit system"
@@ -575,7 +595,7 @@ msgstr "Angiv station ID"
 
 #: ../contents/ui/lib/ManualStationAdd.qml
 msgid "Enter station name (optional)"
-msgstr ""
+msgstr "Angiv station navn (valgfrit)"
 
 #: ../contents/ui/lib/ManualStationAdd.qml
 #: ../contents/ui/lib/StationMapSearcher.qml
@@ -596,7 +616,7 @@ msgstr "Vælg"
 
 #: ../contents/ui/lib/StationListDelegate.qml
 msgid "Edit Name"
-msgstr ""
+msgstr "Rediger Navn"
 
 #: ../contents/ui/lib/StationListDelegate.qml
 msgid "Remove"
@@ -753,6 +773,10 @@ msgid "Precipitation Chance"
 msgstr "Nedbørs sandsynlighed"
 
 #: ../contents/ui/main.qml
+msgid "Precipitation Rate"
+msgstr "Nedbørsmængde"
+
+#: ../contents/ui/main.qml
 msgid "Snow Precipitation Rate"
 msgstr "Sne nedbørsmængde"
 
@@ -771,6 +795,10 @@ msgstr "Fejl..."
 #: ../contents/ui/main.qml
 msgid "Refresh weather"
 msgstr "Opdater vejr"
+
+#~ msgctxt "Short for: 'Precipitation Accumulation'"
+#~ msgid "Precipitation Accum."
+#~ msgstr "Nedbørsmængde akkum."
 
 #~ msgid "ID:"
 #~ msgstr "ID:"

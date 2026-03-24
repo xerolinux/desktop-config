@@ -17,11 +17,17 @@
         <entry name="allowTransient" type="Bool">
             <default>false</default>
         </entry>
+        <entry name="allowModal" type="Bool">
+            <default>false</default>
+        </entry>
         <entry name="tilerVisibility" type="Int">
             <default>0</default>
         </entry>
         <entry name="revealMargin" type="Int">
             <default>200</default>
+        </entry>
+        <entry name="displayAs" type="Int">
+            <default>0</default>
         </entry>
         <entry name="windowVisibility" type="Int">
             <default>0</default>
@@ -216,6 +222,9 @@ SPECIAL_AUTO_TILER_3</default>
         <entry name="shortcutMoveOnDrop" type="String">
             <default>Meta+Ctrl+V</default>
         </entry>
+        <entry name="shortcutToggleTilingSuggestions" type="String">
+            <default>Meta+Ctrl+S</default>
+        </entry>
         <entry name="hintChangeMode" type="Bool">
             <default>true</default>
         </entry>
@@ -232,6 +241,9 @@ SPECIAL_AUTO_TILER_3</default>
             <default>true</default>
         </entry>
         <entry name="hintMoveOnDrop" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="hintToggleTilingSuggestions" type="Bool">
             <default>true</default>
         </entry>
         <entry name="showHintHint" type="Bool">
@@ -264,8 +276,14 @@ SPECIAL_AUTO_TILER_3</default>
         <entry name="autoTileRestoreSize" type="Bool">
             <default>false</default>
         </entry>
+        <entry name="autoTileRestoreSizeAndPosition" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="autoTileIds" type="String">
+            <default></default>
+        </entry>
         <entry name="autoTileBlacklist" type="String">
-            <default>krunner,kded,polkit,plasmashell,yakuake,spectacle,kded5,xwaylandvideobridge,ksplashqml,org.kde.plasmashell,org.kde.polkit-kde-authentication-agent-1,org.kde.kruler,kruler,kwin_wayland,ksmserver-logout-greeter</default>
+            <default>krunner,kded,polkit,plasmashell,yakuake,spectacle,org.kde.spectacle,kded5,xwaylandvideobridge,ksplashqml,org.kde.plasmashell,org.kde.polkit-kde-authentication-agent-1,org.kde.kruler,kruler,kwin_wayland,kwin,ksmserver-logout-greeter,ksmserver</default>
         </entry>
         <entry name="autoTileWindowAction" type="Int">
             <default>0</default>
@@ -328,6 +346,27 @@ SPECIAL_AUTO_TILER_3</default>
             <default>false</default>
         </entry>
         <entry name="autoTilerCarousel3" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="suggestionsVisibility" type="Int">
+            <default>0</default>
+        </entry>
+        <entry name="suggestionsMode" type="Int">
+            <default>0</default>
+        </entry>
+        <entry name="suggestOtherScreens" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="suggestOtherDesktops" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="suggestOtherActivities" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="suggestAutoTiled" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="suggestMinimized" type="Bool">
             <default>false</default>
         </entry>
     </group>

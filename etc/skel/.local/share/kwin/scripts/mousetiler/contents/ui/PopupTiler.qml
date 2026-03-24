@@ -3,11 +3,12 @@ import QtQuick.Layouts
 import org.kde.kwin
 import org.kde.plasma.core as PlasmaCore
 
+// Window {
 PlasmaCore.Dialog {
     id: popupTiler
 
     property var activeScreen: null
-    property var clientArea: ({width: 0, height: 0, x: 0, y: 0})
+    property var clientArea: ({width: 1, height: 1, x: 0, y: 0})
     property int tilePadding: 2
     property int borderOffset: 2
     property int activeLayoutIndex: -1
@@ -35,16 +36,22 @@ PlasmaCore.Dialog {
     // property var scrollLeftTime: 0
     // property var scrollRightTime: 0
 
+    // Workaround for plasma 6.6 and earlier - needed by Window and Plasma Dialog - replaced by Qt.WindowTransparentForInput in Plasma 6.7
+    property bool outputOnly: true
+
     width: clientArea.width
     height: clientArea.height
     x: clientArea.x
     y: clientArea.y
-    flags: Qt.Popup | Qt.BypassWindowManagerHint | Qt.FramelessWindowHint
+    //flags: Qt.Popup | Qt.BypassWindowManagerHint | Qt.FramelessWindowHint
+    // flags: Qt.Tool | Qt.BypassWindowManagerHint | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.WindowDoesNotAcceptFocus
+    flags: (root.config.displayAs == 0 ? 0 : Qt.Popup) | (Qt.BypassWindowManagerHint | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.WindowDoesNotAcceptFocus | Qt.WindowTransparentForInput)
+    // color: "transparent" // Window
     visible: false
-    backgroundHints: PlasmaCore.Types.NoBackground
-    outputOnly: true
+    backgroundHints: PlasmaCore.Types.NoBackground // PlasmaCore.Dialog
+    // outputOnly: true // PlasmaCore.Dialog
     // type: PlasmaCore.Dialog.OnScreenDisplay
-    location: PlasmaCore.Types.Desktop
+    location: PlasmaCore.Types.Desktop // PlasmaCore.Dialog
 
     function reset() {
         activeScreen = null;
@@ -195,7 +202,10 @@ PlasmaCore.Dialog {
                     x: clientArea.x + popupDropHintX,
                     y: clientArea.y + popupDropHintY,
                     width: popupDropHintWidth,
-                    height: popupDropHintHeight
+                    height: popupDropHintHeight,
+                    defaultLayouts: !showAll,
+                    layoutIndex: activeLayoutIndex,
+                    tileIndex: activeTileIndex
                 };
             }
         }
@@ -464,6 +474,10 @@ PlasmaCore.Dialog {
                 defaultHint += (hasShortcutHint ? " - " : "") + "Center in tile (<b>" + root.config.shortcutCenterInTile + "</b>)";
                 hasShortcutHint = true;
             }
+            if (root.config.hintToggleTilingSuggestions) {
+                defaultHint += (hasShortcutHint ? " - " : "") + "Suggestions: <b>" + (settings.showTilingSuggestions ? "Enabled": "Disabled") + "</b> (<b>" + root.config.shortcutToggleTilingSuggestions + "</b>)";
+                hasShortcutHint = true;
+            }
 
             if (defaultHint.length > 0) {
                 hint = defaultHint;
@@ -496,7 +510,9 @@ PlasmaCore.Dialog {
     }
 
     Item {
-        anchors.fill: parent
+        id: mainItem
+        width: popupTiler.width
+        height: popupTiler.height
         visible: revealed
 
         SequentialAnimation {

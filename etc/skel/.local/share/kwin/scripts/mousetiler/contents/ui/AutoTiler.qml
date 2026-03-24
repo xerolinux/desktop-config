@@ -7,6 +7,7 @@ QtObject {
     property bool configAutoTileNewWindows: false
     property bool configAutoTileMinimizedMaximized: true
     property bool configAutoTileRestoreSize: false
+    property bool configAutoTileRestoreSizeAndPosition: true
     property int configAutoTileWindowAction: 0
     property int configAutoTileWindowIndex: 0
     property int configAutoTileFocusAction: 0
@@ -17,11 +18,13 @@ QtObject {
     property int configAutoTileLayer: 0
     property int configMaxAutoTileDelay: 5
     property int configMaxAutoTileDelaySessionStart: 10
-    property var configAutoTileBlacklist: []
+    property var configAutoTileBlacklist: ([])
+    property var configAutoTileIds: ([])
 
     // Use to determine if people can auto-tile
     property bool autoTileInitialized: false
 
+    property list<var> autoActivities: ([])
     property list<var> autoScreens: ([])
     property list<var> autoVirtualDesktops: ([])
 
@@ -43,6 +46,8 @@ QtObject {
 
     property var activeWindow: Workspace.activeWindow
 
+    property var allConnections: ({})
+
     function logDev(text) {
         root.logDev('AutoTiler - ' + text);
     }
@@ -52,15 +57,73 @@ QtObject {
         console.warn('MouseTiler: AutoTiler - ' + text);
     }
 
-    function isValidAutoTileWindow(window) {
+    function isValidAutoTileWindow(window, inform = false) {
         if (!window) return false;
-        if (!window.normalWindow) return false;
-        if (window.skipTaskbar) return false;
-        if (window.popupWindow) return false;
+        if (!window.normalWindow) {
+            if (inform) {
+                onScreenDisplay.show('Unable to auto tile window!\nReason: Window is not a normal window');
+            }
+            return false;
+        }
+        if (window.skipTaskbar) {
+            if (inform) {
+                onScreenDisplay.show('Unable to auto tile window!\nReason: Window is not in taskbar');
+            }
+            return false;
+        }
+        if (window.popupWindow) {
+            if (inform) {
+                onScreenDisplay.show('Unable to auto tile window!\nReason: Window is a popup');
+            }
+            return false;
+        }
         if (window.deleted) return false;
-        if (window.transient) return false;
-        if (window.desktops.length != 1) return false;
-        if (configAutoTileBlacklist.includes(window.resourceClass)) return false;
+        if (window.transient) {
+            if (inform) {
+                onScreenDisplay.show('Unable to auto tile window!\nReason: Window is transient');
+            }
+            return false;
+        }
+        if (window.modal) {
+            if (inform) {
+                onScreenDisplay.show('Unable to auto tile window!\nReason: Window is modal');
+            }
+            return false;
+        }
+        if (window.maximizeMode > 0) {
+            if (inform) {
+                onScreenDisplay.show('Unable to auto tile window!\nReason: Window is maximized');
+            }
+            return false;
+        }
+        if (window.fullScreen) {
+            if (inform) {
+                onScreenDisplay.show('Unable to auto tile window!\nReason: Window is fullscreen');
+            }
+            return false;
+        }
+        if (window.desktops.length != 1) {
+            if (inform) {
+                onScreenDisplay.show('Unable to auto tile window!\nReason: Window is on multiple virtual desktops');
+            }
+            return false;
+        }
+        if (window.activities.length != 1) {
+            if (autoActivities.length == 1 && window.activities.length == 0) {
+                window.activities = [...autoActivities];
+            } else {
+                if (inform) {
+                    onScreenDisplay.show('Unable to auto tile window!\nReason: Window is on multiple activities');
+                }
+                return false;
+            }
+        }
+        if (configAutoTileBlacklist.includes(window.resourceClass)) {
+            if (inform) {
+                onScreenDisplay.show('Unable to auto tile window!\nReason: Application is blacklisted');
+            }
+            return false;
+        }
 
         return true;
     }
@@ -68,29 +131,36 @@ QtObject {
     function initAll() {
         logAutoTiler('initAll');
 
+        for (let i = 0; i < Workspace.activities.length; i++) {
+            autoActivities.push(Workspace.activities[i]);
+        }
+
         for (let i = 0; i < Workspace.desktops.length; i++) {
             autoVirtualDesktops.push(Workspace.desktops[i].id);
         }
 
         for (let i = 0; i < Workspace.screens.length; i++) {
             autoScreens.push(Workspace.screens[i].name);
-            // autoWindowMapping[Workspace.screens[i].name] = {};
-            for (let v = 0; v < Workspace.desktops.length; v++) {
-                // autoWindowMapping[Workspace.screens[i].name][Workspace.desktops[v].id] = {
-                let id = Workspace.screens[i].name + Workspace.desktops[v].id;
-                autoWindowMapping[id] = {
-                    windows: [],
-                    geometries: [],
-                    layoutIndex: 0,
-                    geometryIndex: -1,
-                    windowCount: 0,
-                    primaryWindowIndex: 0,
-                    isCarousel: false,
-                    autoTilerIndex: -1,
-                    id: id,
-                    screenName: Workspace.screens[i].name,
-                    desktopId: Workspace.desktops[v].id
-                };
+
+            for (let a = 0; a < Workspace.activities.length; a++) {
+                for (let v = 0; v < Workspace.desktops.length; v++) {
+                    let id = Workspace.screens[i].name + Workspace.desktops[v].id + Workspace.activities[a];
+                    autoWindowMapping[id] = {
+                        windows: [],
+                        geometries: [],
+                        layoutIndex: 0,
+                        geometryIndex: -1,
+                        windowCount: 0,
+                        primaryWindowIndex: 0,
+                        isCarousel: false,
+                        autoTilerIndex: -1,
+                        id: id,
+                        screenName: Workspace.screens[i].name,
+                        desktopId: Workspace.desktops[v].id,
+                        activity: Workspace.activities[a],
+                        autoTileByDefault: configAutoTileNewWindows || configAutoTileIds.includes(id)
+                    };
+                }
             }
         }
 
@@ -99,12 +169,19 @@ QtObject {
         printCurrentInfo();
     }
 
+    function printAutoTileId() {
+        console.warn('MouseTiler: ###############################################################################################');
+        let currentMapping = getMappingForCurrentScreenDesktopAndActivity();
+        console.warn('MouseTiler: Auto-tiler id: ' + currentMapping.id);
+        console.warn('MouseTiler: ###############################################################################################');
+    }
+
     function autoTileWindowOnStart(window) {
         if (isValidAutoTileWindow(window)) {
-            if (configAutoTileNewWindows || ((window.mt_autoRestore & 256) == 256)) {
+            let currentMapping = getMappingForWindow(window);
+            if (currentMapping.autoTileByDefault || ((window.mt_autoRestore & 256) == 256)) {
                 if ((window.mt_autoRestore & 128) != 128) {
                     if (window.mt_auto == undefined) {
-                        let currentMapping = getMappingForWindow(window);
                         if (currentMapping.autoTilerIndex == -1) {
                             let tiler = (window.mt_autoRestore & 3);
                             logAutoTiler('autoTileWindowOnStart Restoring tiler: ' + tiler);
@@ -112,31 +189,67 @@ QtObject {
                         } else {
                             toggleAutoTile(window);
                         }
+                        if (window.mt_auto) {
+                            retileAllTimer.setTimeout(window.mt_auto);
+                        }
                     }
+                } else {
+                    window.mt_autoRestore = 128;
                 }
             }
         }
     }
 
+    function reinitialize() {
+        logAutoTiler('reinitialize called...');
+        autoWindowMapping = {};
+        autoActivities = [];
+        autoScreens = [];
+        autoVirtualDesktops = [];
+
+        initAll();
+    }
+
     function getMappingById(id) {
-        return autoWindowMapping[id];
+        let mapping = autoWindowMapping[id];
+        if (!mapping) {
+            reinitialize();
+            mapping = autoWindowMapping[id];
+        }
+        return mapping;
     }
 
     function getMappingForWindow(window) {
-        return autoWindowMapping[window.output.name + window.desktops[0].id];
+        let mapping = autoWindowMapping[window.output.name + window.desktops[0].id + window.activities[0]];
+        if (!mapping) {
+            reinitialize();
+            mapping = autoWindowMapping[window.output.name + window.desktops[0].id + window.activities[0]];
+        }
+        return mapping;
     }
 
-    function getMappingByScreenNameAndVirtualDesktopId(screenName, virtualDesktopId) {
-        return autoWindowMapping[screenName + virtualDesktopId];
+    function getMappingByScreenNameDesktopIdAndActivity(screenName, virtualDesktopId, activity) {
+        let mapping = autoWindowMapping[screenName + virtualDesktopId + activity];
+        if (!mapping) {
+            reinitialize();
+            mapping = autoWindowMapping[screenName + virtualDesktopId + activity];
+        }
+        return mapping;
     }
 
-    function getMappingForCurrentScreenAndDesktop() {
-        return autoWindowMapping[Workspace.activeScreen.name + Workspace.currentDesktop.id];
+    function getMappingForCurrentScreenDesktopAndActivity(shouldReinitialize = true) {
+        let mapping = autoWindowMapping[Workspace.activeScreen.name + Workspace.currentDesktop.id + Workspace.currentActivity];
+        if (!mapping && shouldReinitialize) {
+            reinitialize();
+            mapping = autoWindowMapping[Workspace.activeScreen.name + Workspace.currentDesktop.id + Workspace.currentActivity];
+        }
+        return mapping;
     }
 
     function updateAutoTilersInPopupTiler() {
         logAutoTiler('updateAutoTilersInPopupTiler 1');
-        let currentScreenMapping = getMappingForCurrentScreenAndDesktop();
+        let currentScreenMapping = getMappingForCurrentScreenDesktopAndActivity();
+        if (!currentScreenMapping) return;
         let currentScreenAutoTilerIndex = currentScreenMapping.autoTilerIndex;
         let currentScreenLayoutIndex = currentScreenMapping.layoutIndex;
         let nextLayoutIndex = currentScreenMapping.windowCount;
@@ -201,7 +314,7 @@ QtObject {
     }
 
     function shouldShowAutoTileScroll() {
-        let currentMapping = getMappingForCurrentScreenAndDesktop();
+        let currentMapping = getMappingForCurrentScreenDesktopAndActivity();
         if (currentMapping.autoTilerIndex == -1) return {left: false, right: false};
         if (currentMapping.windows.length < 2) return {left: false, right: false};
         if (currentMapping.isCarousel) return {left: true, right: true};
@@ -299,7 +412,7 @@ QtObject {
         }
         delete window.mt_minimized;
 
-        if (Workspace.activeWindow != previousWindow) {
+        if (Workspace.activeWindow != previousWindow && previousWindow != null) {
             if (previousWindow.mt_auto) {
                 let previousMapping = getMappingById(previousWindow.mt_auto);
                 if (previousMapping.autoTilerIndex != -1) {
@@ -362,7 +475,7 @@ QtObject {
     }
 
     function modifyPrimaryIndex(offset, forcedMapping = null) {
-        let currentMapping = forcedMapping || getMappingForCurrentScreenAndDesktop();
+        let currentMapping = forcedMapping || getMappingForCurrentScreenDesktopAndActivity();
         if (currentMapping.windowCount > 0) {
             let primaryWindowIndexBefore = currentMapping.primaryWindowIndex;
             currentMapping.primaryWindowIndex += offset;
@@ -404,13 +517,14 @@ QtObject {
 
     }
 
-    function internalDisableAutoTiling(window) {
+    function disableAutoTiling(window) {
         logAutoTiler('### Disable 1');
         if (window.mt_auto) {
             let previousWindow = Workspace.activeWindow;
             let currentMapping = getMappingById(window.mt_auto);
             logAutoTiler('### Disable 2');
             let index = currentMapping.windows.indexOf(window);
+            delete window.mt_auto;
             if (index >= 0) {
                 currentMapping.windows.splice(index, 1);
                 currentMapping.windowCount--;
@@ -428,12 +542,11 @@ QtObject {
                 updateShouldShowScreenEdges();
             }
             logAutoTiler('### Disable 4');
-            delete window.mt_auto;
             window.keepBelow = false;
             window.keepAbove = false;
             // TODO: Remove it from the auto-tiling
 
-            if (!previousWindow.minimized) {
+            if (previousWindow != null && !previousWindow.minimized) {
                 logAutoTiler('### Disable 4.1');
                 ignoreActivates = true;
                 if (previousWindow.my_auto) {
@@ -444,7 +557,7 @@ QtObject {
                 ignoreActivates = false;
             }
 
-            if (configAutoTileNewWindows) {
+            if (currentMapping.autoTileByDefault) {
                 window.mt_autoRestore = 128;
             } else {
                 delete window.mt_autoRestore;
@@ -455,20 +568,26 @@ QtObject {
 
     function printCurrentInfo() {
         logAutoTiler('##########################################################');
-        let currentMapping = getMappingForCurrentScreenAndDesktop();
-        logAutoTiler('Tiler: ' + currentMapping.autoTilerIndex + ' windowCount: ' + currentMapping.windowCount + '(' + currentMapping.windows.length + ') isCarousel: ' + currentMapping.isCarousel);
-        logAutoTiler('primaryWindowIndex: ' + currentMapping.primaryWindowIndex + ' geometryIndex: ' + currentMapping.geometryIndex + ' geometries #: ' + currentMapping.geometries.length);
-        logAutoTiler('Current window auto-tiled: ' + Workspace.activeWindow.mt_auto  + ' autoRestore: ' + Workspace.activeWindow.mt_autoRestore);
-        logAutoTiler('Current window id: ' + Workspace.activeWindow.internalId);
-        for (let i = 0; i < currentMapping.windows.length; i++) {
-            logAutoTiler('Window #' + i + ': ' + currentMapping.windows[i].internalId);
+        let currentMapping = getMappingForCurrentScreenDesktopAndActivity(false);
+        if (currentMapping) {
+            logAutoTiler('Tiler: ' + currentMapping.autoTilerIndex + ' windowCount: ' + currentMapping.windowCount + '(' + currentMapping.windows.length + ') isCarousel: ' + currentMapping.isCarousel);
+            logAutoTiler('primaryWindowIndex: ' + currentMapping.primaryWindowIndex + ' geometryIndex: ' + currentMapping.geometryIndex + ' geometries #: ' + currentMapping.geometries.length);
+            if (Workspace.activeWindow != null) {
+                logAutoTiler('Current window auto-tiled: ' + Workspace.activeWindow.mt_auto  + ' autoRestore: ' + Workspace.activeWindow.mt_autoRestore);
+                logAutoTiler('Current window id: ' + Workspace.activeWindow.internalId);
+            }
+            for (let i = 0; i < currentMapping.windows.length; i++) {
+                logAutoTiler('Window #' + i + ': ' + currentMapping.windows[i].internalId);
+            }
+        } else {
+            logAutoTiler('Invalid mapping... not initialized correctly!');
         }
         logAutoTiler('##########################################################');
     }
 
     function virtualDesktopAboutToChange() {
         if (root.currentlyMovedWindow != null && root.currentlyMovedWindow.mt_auto) {
-            internalDisableAutoTiling(root.currentlyMovedWindow);
+            disableAutoTiling(root.currentlyMovedWindow);
         }
     }
 
@@ -530,7 +649,7 @@ QtObject {
             let windowIndex = data.index;
             logAutoTiler('i: ' + i + ' w: ' + windowIndex);
             logAutoTiler('RETILE 2.1 - width before: ' + mapping.windows[windowIndex].width);
-            root.moveAndResizeWindow(mapping.windows[windowIndex], data.geometry);
+            root.moveAndResizeWindow(mapping.windows[windowIndex], data.geometry, true);
             logAutoTiler('RETILE 2.2 - width after: ' + mapping.windows[windowIndex].width);
             isVisible[windowIndex] = true;
             if (updateLayerKeepBelow) {
@@ -540,12 +659,12 @@ QtObject {
                 mapping.windows[windowIndex].minimized = false;
                 delete mapping.windows[windowIndex].mt_minimized
             }
-            if (config.sortZ) {
-                Workspace.activeWindow = mapping.windows[windowIndex];
+            if (autoLayoutConfigs[mapping.autoTilerIndex].sortZ) {
+                Workspace.raiseWindow(mapping.windows[windowIndex]);
             }
         }
 
-        if (!config.sortZ) {
+        if (!autoLayoutConfigs[mapping.autoTilerIndex].sortZ) {
             for (let i = 0; i < layout.autoMapping.length; i++) {
                 let windowIndex = layout.autoMapping[i];
                 if (windowIndex == '*') {
@@ -558,7 +677,7 @@ QtObject {
                 } else if (windowIndex >= mapping.windows.length) {
                     windowIndex -= mapping.windows.length;
                 }
-                Workspace.activeWindow = mapping.windows[windowIndex];
+                Workspace.raiseWindow(mapping.windows[windowIndex]);
             }
         }
 
@@ -571,7 +690,7 @@ QtObject {
             }
         }
 
-        if (previousWindow.mt_auto && mapping.id == previousWindow.mt_auto) {
+        if (previousWindow != null && previousWindow.mt_auto && mapping.id == previousWindow.mt_auto) {
         //     // Window is already updated
         //     if (updateLayerKeepBelow) {
         //         Workspace.activeWindow.keepBelow = false;
@@ -594,21 +713,22 @@ QtObject {
     }
 
     function internalIsFullyOnScreen(window, mapping) {
+        if (window.activities && window.activities[0] != mapping.activity) return false;
         let screenIndex = Workspace.screens.findIndex(screen => screen.name == mapping.screenName);
         let desktopIndex = Workspace.desktops.findIndex(desktop => desktop.id == mapping.desktopId);
 
         if (screenIndex != -1 && desktopIndex != -1) {
             let clientArea = Workspace.clientArea(KWin.FullScreenArea, Workspace.screens[screenIndex], Workspace.desktops[desktopIndex]);
-            return (window.frameGeometry.left + 0.01 > clientArea.left && window.frameGeometry.right - 0.01 < clientArea.right && window.frameGeometry.top + 0.01 > clientArea.top && window.frameGeometry.bottom - 0.01 < clientArea.bottom);
+            return (window.frameGeometry.x + 0.01 > clientArea.left && window.frameGeometry.x + window.frameGeometry.width - 0.01 < clientArea.right && window.frameGeometry.y + 0.01 > clientArea.top && window.frameGeometry.y + window.frameGeometry.height - 0.01 < clientArea.bottom);
         }
         return false;
     }
 
     function internalInsertNewWindow(window, index, lookUpIndex = false, tiler = -1, forcedMapping = null) {
         if (isValidAutoTileWindow(window)) {
-            let currentMapping = forcedMapping || getMappingForCurrentScreenAndDesktop();
+            let currentMapping = forcedMapping || getMappingForCurrentScreenDesktopAndActivity();
             logAutoTiler('INSERT Window mapping: ' + getMappingForWindow(window).id);
-            logAutoTiler('INSERT Screen mapping: ' + getMappingForCurrentScreenAndDesktop().id);
+            logAutoTiler('INSERT Screen mapping: ' + getMappingForCurrentScreenDesktopAndActivity().id);
             logAutoTiler('INSERT Forced mapping: ' + (forcedMapping ? forcedMapping.id : forcedMapping));
             logAutoTiler('INSERT 1.0 insert index: ' + index + ' tiler: ' + tiler + ' currentMapping.autoTilerIndex: ' + currentMapping.autoTilerIndex + ' lookUpIndex: ' + lookUpIndex);
             if (currentMapping.autoTilerIndex == -1 && index == 0) {
@@ -633,7 +753,7 @@ QtObject {
                     logAutoTiler('INSERT Z ---- currentMapping.geometries: ' + currentMapping.geometries.length + ' wanted: ' + geometryIndex);
                     let geometry = JSON.parse(JSON.stringify(currentMapping.geometries[geometryIndex]));
                     root.addMargins(geometry, true, true, true, true);
-                    root.moveAndResizeWindow(window, geometry);
+                    root.moveAndResizeWindow(window, geometry, false);
                     return;
                 }
                 logAutoTiler('INSERT Z index: ' + index);
@@ -782,15 +902,21 @@ QtObject {
         }
     }
 
+    function cancelMove(window) {
+        internalRetileAll(getMappingById(window.mt_auto));
+    }
+
     function windowDropped(window, index, tiler) {
         logAutoTiler('Window auto tiled: ' + window.caption + ' index: ' + index + ' tiler: ' + tiler);
 
         if (window.mt_auto == undefined) {
             logAutoTiler('windowDropped 1');
-            internalInsertNewWindow(window, index, true, tiler);
+            if (isValidAutoTileWindow(window, true)) {
+                internalInsertNewWindow(window, index, true, tiler);
+            }
         } else {
             logAutoTiler('windowDropped 2');
-            let currentMapping = getMappingForCurrentScreenAndDesktop();
+            let currentMapping = getMappingForCurrentScreenDesktopAndActivity();
             logAutoTiler('windowDropped 3 ' + currentMapping.id);
             let previousMapping = getMappingById(window.mt_auto);
             logAutoTiler('windowDropped 4 ' + previousMapping.id);
@@ -807,9 +933,9 @@ QtObject {
                 internalUpdateGeometries(currentMapping, false);
                 logAutoTiler('windowDropped 4.5 geometryIndex: ' + geometryIndex + ' length: ' + currentMapping.geometries.length);
                 let geometry = JSON.parse(JSON.stringify(currentMapping.geometries[geometryIndex]));
-                internalDisableAutoTiling(window);
+                disableAutoTiling(window);
                 root.addMargins(geometry, true, true, true, true);
-                root.moveAndResizeWindow(window, geometry);
+                root.moveAndResizeWindow(window, geometry, false);
             } else if (currentMapping.id == previousMapping.id) {
                 logAutoTiler('windowDropped 5 target index: ' + targetIndex);
 
@@ -834,7 +960,7 @@ QtObject {
             } else {
                 logAutoTiler('windowDropped 9');
 
-                internalDisableAutoTiling(window);
+                disableAutoTiling(window);
                 internalInsertNewWindow(window, index, true, tiler, currentMapping);
             }
             logAutoTiler('windowDropped 10');
@@ -860,7 +986,7 @@ QtObject {
     }
 
     function changeToPreviousTiler() {
-        let mapping = getMappingForCurrentScreenAndDesktop();
+        let mapping = getMappingForCurrentScreenDesktopAndActivity();
         let nextTiler = mapping.autoTilerIndex - 1;
         if (nextTiler >= 0) {
             changeToTiler(nextTiler, mapping);
@@ -868,7 +994,7 @@ QtObject {
     }
 
     function changeToNextTiler() {
-        let mapping = getMappingForCurrentScreenAndDesktop();
+        let mapping = getMappingForCurrentScreenDesktopAndActivity();
         let nextTiler = mapping.autoTilerIndex + 1;
         if (mapping.autoTilerIndex != -1 && nextTiler < 3) {
             changeToTiler(nextTiler, mapping);
@@ -877,9 +1003,7 @@ QtObject {
 
     function toggleAutoTile(window, tiler = -1) {
         if (window.mt_auto == undefined) {
-            if (configAutoTileRestoreSize) {
-                window.mt_originalSize = {xOffset: 0, width: window.width, height: window.height};
-            }
+            window.mt_originalSize = {x: window.x, y: window.y, width: window.width, height: window.height};
             let currentMapping = getMappingForWindow(window);
             let configIndex = tiler != -1 ? tiler : (currentMapping.autoTilerIndex != -1 ? currentMapping.autoTilerIndex : 0);
             let insertIndex = autoLayoutConfigs[configIndex].autoTileIndex;
@@ -912,9 +1036,9 @@ QtObject {
             //     internalSetActiveWindow(window, currentMapping.autoTilerIndex);
             // }
         } else {
-            internalDisableAutoTiling(window);
+            disableAutoTiling(window);
             if (configAutoTileRestoreSize && window.mt_originalSize) {
-                window.frameGeometry = Qt.rect(window.frameGeometry.x, window.frameGeometry.y, window.mt_originalSize.width, window.mt_originalSize.height);
+                window.frameGeometry = Qt.rect(window.mt_originalSize.x, window.mt_originalSize.y, window.mt_originalSize.width, window.mt_originalSize.height);
                 delete window.mt_originalSize;
             }
         }
@@ -924,12 +1048,32 @@ QtObject {
         logAutoTiler('Window added: ' + window.caption);
 
         window.minimizedChanged.connect(windowMinimizedChanged);
-        // window.maximizedChanged.connect(windowMaximizedChanged);
         window.maximizedAboutToChange.connect(windowMaximizedAboutToChange);
         window.maximizedChanged.connect(windowMaximizedChanged);
         window.transientChanged.connect(windowTransientChanged);
+        window.modalChanged.connect(windowModalChanged);
+        window.outputChanged.connect(windowOutputChanged);
+        window.desktopsChanged.connect(windowDesktopsChanged);
+        window.activitiesChanged.connect(windowActivitiesChanged);
+        window.fullScreenChanged.connect(windowFullScreenChanged);
 
         delete window.mt_auto;
+
+        allConnections[window.internalId] = disconnectAll;
+
+        function disconnectAll() {
+            window.minimizedChanged.disconnect(windowMinimizedChanged);
+            window.maximizedAboutToChange.disconnect(windowMaximizedAboutToChange);
+            window.maximizedChanged.disconnect(windowMaximizedChanged);
+            window.transientChanged.disconnect(windowTransientChanged);
+            window.modalChanged.disconnect(windowModalChanged);
+            window.outputChanged.disconnect(windowOutputChanged);
+            window.desktopsChanged.disconnect(windowDesktopsChanged);
+            window.activitiesChanged.disconnect(windowActivitiesChanged);
+            window.fullScreenChanged.disconnect(windowFullScreenChanged);
+
+            delete allConnections[window.internalId];
+        }
 
         let now = Date.now();
         if (configMaxAutoTileDelaySessionStart > 0 && (now < sessionStartTime + configMaxAutoTileDelaySessionStart * 1000)) {
@@ -960,7 +1104,7 @@ QtObject {
                     if (window.mt_auto && configAutoTileMinimizedMaximized) {
                         window.mt_autoRestoreMinMax = true;
                     }
-                    internalDisableAutoTiling(window);
+                    disableAutoTiling(window);
                     delete window.mt_minimized;
                 }
             } else {
@@ -979,7 +1123,7 @@ QtObject {
                     logAutoTiler('11111111111111111111111111111');
                     window.mt_autoRestoreMinMax = true;
                 }
-                internalDisableAutoTiling(window);
+                disableAutoTiling(window);
             } else if (configAutoTileMinimizedMaximized && window.mt_autoRestoreMinMax) {
                 currentWindowUnMaximized = true;
             }
@@ -996,24 +1140,147 @@ QtObject {
 
         function windowTransientChanged() {
             logAutoTiler('Window transient: ' + window.caption + ' ' + window.transient);
-            // TODO:
-            internalDisableAutoTiling(window);
+            if (window.transient) {
+                disableAutoTiling(window);
+            }
+        }
+
+        function windowModalChanged() {
+            logAutoTiler('Window modal: ' + window.caption + ' ' + window.modal);
+            if (window.modal) {
+                disableAutoTiling(window);
+            }
+        }
+
+        function windowOutputChanged() {
+            logAutoTiler('Window output changed: ' + window.caption + ' currently moved window: ' + (window == root.currentlyMovedWindow));
+            if (window != root.currentlyMovedWindow && window.mt_auto) {
+                let originalSize = window.mt_originalSize;
+                disableAutoTiling(window);
+                toggleAutoTile(window);
+                if (configAutoTileRestoreSize && originalSize) {
+                    window.mt_originalSize = originalSize;
+                }
+            }
+        }
+
+        function windowDesktopsChanged() {
+            logAutoTiler('Window desktops changed: ' + window.caption + ' currently moved window: ' + (window == root.currentlyMovedWindow));
+            if (window != root.currentlyMovedWindow && window.mt_auto) {
+                let originalSize = window.mt_originalSize;
+                disableAutoTiling(window);
+                toggleAutoTile(window);
+                if (configAutoTileRestoreSize && originalSize) {
+                    window.mt_originalSize = originalSize;
+                }
+            }
+        }
+
+        function windowActivitiesChanged() {
+            logAutoTiler('Window activities changed: ' + window.caption + ' ' + JSON.stringify(window.activities));
+
+            if (window.mt_auto) {
+                if (window.activities.length == 1) {
+                    let currentMapping = getMappingById(window.mt_auto);
+                    if (window.activities[0] == currentMapping.activity) {
+                        // Activity not changed...
+                        return;
+                    }
+                }
+                disableAutoTiling(window);
+            }
+        }
+
+        function windowFullScreenChanged() {
+            logAutoTiler('Window fullscreen: ' + window.caption + ' ' + window.fullScreen);
+            if (window.fullScreen) {
+                if (window.mt_auto && configAutoTileMinimizedMaximized) {
+                    window.mt_autoRestoreMinMax = true;
+                }
+                disableAutoTiling(window);
+            } else {
+                if (configAutoTileMinimizedMaximized && window.mt_autoRestoreMinMax) {
+                    toggleAutoTile(window);
+                    delete window.mt_autoRestoreMinMax;
+                }
+            }
         }
     }
 
     function windowClosed(window) {
         logAutoTiler('Window closed: ' + window.caption);
-        internalDisableAutoTiling(window);
+        disableAutoTiling(window);
+        if (allConnections[window.internalId]) {
+            allConnections[window.internalId]();
+        }
     }
 
     function windowMoved(window) {
         logAutoTiler('Window moved: ' + window.caption);
-        internalDisableAutoTiling(window);
+        disableAutoTiling(window);
     }
 
     function windowResized(window) {
         logAutoTiler('Window resized: ' + window.caption);
-        internalDisableAutoTiling(window);
+        disableAutoTiling(window);
+    }
+
+    function activitiesChanged() {
+        let removed = [...autoActivities];
+        let added = [];
+
+        for (let i = 0; i < Workspace.activities.length; i++) {
+            let activity = Workspace.activities[i];
+            if (autoActivities.indexOf(activity) == -1) {
+                added.push(activity);
+            } else {
+                removed.splice(removed.indexOf(activity), 1);
+            }
+        }
+
+        for (let i = 0; i < added.length; i++) {
+            let activity = added[i];
+            autoActivities.push(activity);
+            for (let s = 0; s < autoScreens.length; s++) {
+                for (let v = 0; v < autoVirtualDesktops.length; v++) {
+                    let id = autoScreens[s] + autoVirtualDesktops[v] + activity;
+                    autoWindowMapping[id] = {
+                        windows: [],
+                        geometries: [],
+                        layoutIndex: 0,
+                        geometryIndex: -1,
+                        windowCount: 0,
+                        primaryWindowIndex: 0,
+                        isCarousel: false,
+                        autoTilerIndex: -1,
+                        id: id,
+                        screenName: autoScreens[s],
+                        desktopId: autoVirtualDesktops[v],
+                        activity: activity,
+                        autoTileByDefault: configAutoTileNewWindows || configAutoTileIds.includes(id)
+                    };
+                }
+            }
+        }
+
+        for (let i = 0; i < removed.length; i++) {
+            let activity = removed[i];
+            let index = autoActivities.indexOf(activity);
+            if (index != -1) {
+                autoActivities.splice(index, 1);
+                for (let s = 0; s < autoScreens.length; s++) {
+                    for (let v = 0; v < autoVirtualDesktops.length; v++) {
+                        let currentMapping = getMappingByScreenNameDesktopIdAndActivity(autoScreens[s], autoVirtualDesktops[v], activity);
+                        for (let w = 0; w < currentMapping.windows.length; w++) {
+                            delete currentMapping.windows[w].mt_auto;
+                        }
+                        delete autoWindowMapping[autoScreens[s] + autoVirtualDesktops[v] + activity];
+                    }
+                }
+            }
+        }
+
+        log('activitiesChanged added: ' + JSON.stringify(added) + ' removed: ' + JSON.stringify(removed) + ' all: ' + JSON.stringify(autoActivities));
     }
 
     function virtualDesktopsChanged() {
@@ -1033,20 +1300,24 @@ QtObject {
             let desktopId = added[i];
             autoVirtualDesktops.push(desktopId);
             for (let s = 0; s < autoScreens.length; s++) {
-                let id = autoScreens[s] + desktopId;
-                autoWindowMapping[id] = {
-                    windows: [],
-                    geometries: [],
-                    layoutIndex: 0,
-                    geometryIndex: -1,
-                    windowCount: 0,
-                    primaryWindowIndex: 0,
-                    isCarousel: false,
-                    autoTilerIndex: -1,
-                    id: id,
-                    screenName: autoScreens[s],
-                    desktopId: desktopId
-                };
+                for (let a = 0; a < autoActivities.length; a++) {
+                    let id = autoScreens[s] + desktopId + autoActivities[a];
+                    autoWindowMapping[id] = {
+                        windows: [],
+                        geometries: [],
+                        layoutIndex: 0,
+                        geometryIndex: -1,
+                        windowCount: 0,
+                        primaryWindowIndex: 0,
+                        isCarousel: false,
+                        autoTilerIndex: -1,
+                        id: id,
+                        screenName: autoScreens[s],
+                        desktopId: desktopId,
+                        activity: autoActivities[a],
+                        autoTileByDefault: configAutoTileNewWindows || configAutoTileIds.includes(id)
+                    };
+                }
             }
         }
 
@@ -1056,11 +1327,13 @@ QtObject {
             if (index != -1) {
                 autoVirtualDesktops.splice(index, 1);
                 for (let s = 0; s < autoScreens.length; s++) {
-                    let currentMapping = getMappingByScreenNameAndVirtualDesktopId(autoScreens[s], desktopId);
-                    for (let w = 0; w < currentMapping.windows.length; w++) {
-                        delete currentMapping.windows[w].mt_auto;
+                    for (let a = 0; a < autoActivities.length; a++) {
+                        let currentMapping = getMappingByScreenNameDesktopIdAndActivity(autoScreens[s], desktopId, autoActivities[a]);
+                        for (let w = 0; w < currentMapping.windows.length; w++) {
+                            delete currentMapping.windows[w].mt_auto;
+                        }
+                        delete autoWindowMapping[autoScreens[s] + desktopId + autoActivities[a]];
                     }
-                    delete autoWindowMapping[autoScreens[s] + desktopId];
                 }
             }
         }
@@ -1084,21 +1357,25 @@ QtObject {
         for (let i = 0; i < added.length; i++) {
             let screenName = added[i];
             autoScreens.push(screenName);
-            for (let v = 0; v < autoVirtualDesktops.length; v++) {
-                let id = screenName + autoVirtualDesktops[v];
-                autoWindowMapping[id] = {
-                    windows: [],
-                    geometries: [],
-                    layoutIndex: 0,
-                    geometryIndex: -1,
-                    windowCount: 0,
-                    primaryWindowIndex: 0,
-                    isCarousel: false,
-                    autoTilerIndex: -1,
-                    id: id,
-                    screenName: screenName,
-                    desktopId: autoVirtualDesktops[v]
-                };
+            for (let a = 0; a < autoActivities.length; a++) {
+                for (let v = 0; v < autoVirtualDesktops.length; v++) {
+                    let id = screenName + autoVirtualDesktops[v] + autoActivities[a];
+                    autoWindowMapping[id] = {
+                        windows: [],
+                        geometries: [],
+                        layoutIndex: 0,
+                        geometryIndex: -1,
+                        windowCount: 0,
+                        primaryWindowIndex: 0,
+                        isCarousel: false,
+                        autoTilerIndex: -1,
+                        id: id,
+                        screenName: screenName,
+                        desktopId: autoVirtualDesktops[v],
+                        activity: autoActivities[a],
+                        autoTileByDefault: configAutoTileNewWindows || configAutoTileIds.includes(id)
+                    };
+                }
             }
         }
 
@@ -1107,12 +1384,14 @@ QtObject {
             let index = autoScreens.indexOf(screenName);
             if (index != -1) {
                 autoScreens.splice(index, 1);
-                for (let v = 0; v < autoVirtualDesktops.length; v++) {
-                    let currentMapping = getMappingByScreenNameAndVirtualDesktopId(screenName, autoVirtualDesktops[v]);
-                    for (let w = 0; w < currentMapping.windows.length; w++) {
-                        delete currentMapping.windows[w].mt_auto;
+                for (let a = 0; a < autoActivities.length; a++) {
+                    for (let v = 0; v < autoVirtualDesktops.length; v++) {
+                        let currentMapping = getMappingByScreenNameDesktopIdAndActivity(screenName, autoVirtualDesktops[v], autoActivities[a]);
+                        for (let w = 0; w < currentMapping.windows.length; w++) {
+                            delete currentMapping.windows[w].mt_auto;
+                        }
+                        delete autoWindowMapping[screenName + autoVirtualDesktops[v] + autoActivities[a]];
                     }
-                    delete autoWindowMapping[screenName + autoVirtualDesktops[v]];
                 }
             }
         }
@@ -1150,12 +1429,34 @@ QtObject {
         }
     }
 
+    /*
+     * Restore all auto-tiled windows to their original position and size, this is required when disabling mouse tiler to make sure the windows do not stay off-screen.
+     * Only time this would be needed is if the script unloads before other apps are closed. Mostly good to have.
+     */
+    function restoreAllOffScreenAutoTiledWindows() {
+        if (!configAutoTileRestoreSizeAndPosition) return;
+        log('Trying to restore all off-screen auto tiled windows');
+
+        let keys = Object.keys(autoWindowMapping);
+        for (let m = 0; m < keys.length; m++) {
+            let mapping = autoWindowMapping[keys[m]];
+            for (let w = 0; w < mapping.windows.length; w++) {
+                let window = mapping.windows[w];
+                if (window.mt_originalSize) {
+                    window.frameGeometry = Qt.rect(window.mt_originalSize.x, window.mt_originalSize.y, window.mt_originalSize.width, window.mt_originalSize.height);
+                    delete window.mt_originalSize;
+                }
+            }
+        }
+    }
+
     function loadAutoTilerConfig() {
-        const defaultBlacklist = 'krunner,kded,polkit,plasmashell,yakuake,spectacle,kded5,xwaylandvideobridge,ksplashqml,org.kde.plasmashell,org.kde.polkit-kde-authentication-agent-1,org.kde.kruler,kruler,kwin_wayland,ksmserver-logout-greeter';
+        const defaultBlacklist = 'krunner,kded,polkit,plasmashell,yakuake,spectacle,org.kde.spectacle,kded5,xwaylandvideobridge,ksplashqml,org.kde.plasmashell,org.kde.polkit-kde-authentication-agent-1,org.kde.kruler,kruler,kwin_wayland,kwin,ksmserver-logout-greeter,ksmserver';
 
         configAutoTileNewWindows = KWin.readConfig("autoTileNewWindows", false);
         configAutoTileMinimizedMaximized = KWin.readConfig("autoTileMinimizedMaximized", true);
         configAutoTileRestoreSize = KWin.readConfig("autoTileRestoreSize", false);
+        configAutoTileRestoreSizeAndPosition = KWin.readConfig("autoTileRestoreSizeAndPosition", true);
         configAutoTileWindowAction = KWin.readConfig("autoTileWindowAction", 0);
         configAutoTileWindowIndex = KWin.readConfig("autoTileWindowIndex", 0);
         configAutoTileFocusAction = KWin.readConfig("autoTileFocusAction", 0);
@@ -1167,6 +1468,7 @@ QtObject {
         configMaxAutoTileDelay = KWin.readConfig("maxAutoTileDelay", 5);
         configMaxAutoTileDelaySessionStart = KWin.readConfig("maxAutoTileDelaySessionStart", 10);
         configAutoTileBlacklist = KWin.readConfig("autoTileBlacklist", defaultBlacklist).replace(/\s+/g, '').split(',');
+        configAutoTileIds = KWin.readConfig("autoTileIds", "").replace(/\s+/g, '').split(',');
 
         initAutoTilerLayout(1);
         initAutoTilerLayout(2);

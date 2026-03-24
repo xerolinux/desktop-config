@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtNetwork
 
 import org.kde.plasma.plasmoid
 import org.kde.kirigami as Kirigami
@@ -44,6 +45,7 @@ PlasmoidItem {
 
     hideOnWindowDeactivate: !pinned
 
+    property bool isOnline: NetworkInformation.reachability === NetworkInformation.Reachability.Online
     property bool inTray: (plasmoid.containmentDisplayHints & PlasmaCore.Types.ContainmentDrawsPlasmoidHeading)
     property bool onDesktop: plasmoid.location === PlasmaCore.Types.Floating
     property bool horizontal: plasmoid.location === PlasmaCore.Types.TopEdge || plasmoid.location === PlasmaCore.Types.BottomEdge
@@ -62,7 +64,7 @@ PlasmoidItem {
         property bool init: false
         property var errors: []
         property int count: 0
-        property bool busy: false
+        property bool busy: true
         property bool upgrading: false
         property bool error: !busy && errors.length > 0
         property bool paused: !busy && !scheduler.running && cfg.checkMode !== "manual"
@@ -93,7 +95,7 @@ PlasmoidItem {
             text: i18n("Check updates")
             icon.name: "view-refresh"
             enabled: !sts.upgrading
-            onTriggered: JS.checkUpdates()
+            onTriggered: sts.proc ? JS.stopCheck() : JS.checkUpdates()
         },
         PlasmaCore.Action {
             text: i18n("Upgrade system")
@@ -130,6 +132,7 @@ PlasmoidItem {
         onTriggered: JS.saveConfig()
     }
 
+    onIsOnlineChanged: (!isOnline && sts.proc) && JS.stopCheck()
     onCheckModeChanged: sts.init && scheduler.restart()
     onSortingChanged: sts.init && JS.refreshListModel()
     onRulesChanged: sts.init && JS.refreshListModel()

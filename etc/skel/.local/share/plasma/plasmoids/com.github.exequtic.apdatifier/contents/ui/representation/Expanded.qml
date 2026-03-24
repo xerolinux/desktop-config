@@ -13,7 +13,7 @@ import "../scrollview" as View
 import "../../tools/tools.js" as JS
 
 Representation {
-    property string currVersion: "v2.9.7.1"
+    property string currVersion: "v2.9.8"
     property bool searchFieldOpen: false
     property bool expanded: root.expanded
     onExpandedChanged: {
@@ -128,7 +128,7 @@ Representation {
                     iconSource: cfg.ownIconsUI ? (sts.busy ? svg("toolbar_stop") : svg("toolbar_check"))
                                                : (sts.busy ? "media-playback-stopped" : "view-refresh")
                     visible: cfg.checkButton && !sts.upgrading
-                    onClicked: JS.checkUpdates()
+                    onClicked: sts.proc ? JS.stopCheck() : JS.checkUpdates()
                 }
 
                 ToolbarButton {
@@ -254,7 +254,7 @@ Representation {
             Layout.bottomMargin: Kirigami.Units.smallSpacing * 2
             text: "<b>" + i18n("Check out release notes")+" "+currVersion+"</b>"
             type: Kirigami.MessageType.Positive
-            visible: !searchFieldOpen &&
+            visible: !searchFieldOpen && isOnline &&
                      plasmoid.configuration.version.localeCompare(currVersion, undefined, { numeric: true, sensitivity: 'base' }) < 0
 
             actions: [
@@ -275,6 +275,15 @@ Representation {
                     }
                 }
             ]
+        }
+
+        Kirigami.InlineMessage {
+            Layout.fillWidth: true
+            Layout.topMargin: Kirigami.Units.smallSpacing * 2
+            Layout.bottomMargin: Kirigami.Units.smallSpacing * 2
+            text: "<b>" + i18n("No internet connection") + "</b>"
+            type: Kirigami.MessageType.Error
+            visible: !isOnline
         }
 
         SwipeView {
