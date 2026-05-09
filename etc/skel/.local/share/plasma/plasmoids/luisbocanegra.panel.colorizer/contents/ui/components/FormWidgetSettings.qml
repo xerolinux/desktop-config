@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
+import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasmoid
 import "../code/enum.js" as Enum
 import "../code/utils.js" as Utils
@@ -27,6 +28,13 @@ ColumnLayout {
     property var config: handleString ? JSON.parse(configString) : undefined
 
     property bool showFontConfig: elementName === "" || elementName === "widgets"
+
+    readonly property bool vertical: {
+        if (Plasmoid.formFactor == PlasmaCore.Types.Vertical) {
+            return true;
+        }
+        return false;
+    }
 
     property var fontsModel: {
         let arr = [];
@@ -126,7 +134,7 @@ ColumnLayout {
     }
     Component.onCompleted: {
         Utils.delay(50, () => ready = true, root);
-        runCommand.run('plasmashell --version');
+        runCommand.exec('plasmashell --version');
     }
 
     Kirigami.FormLayout {
@@ -152,6 +160,19 @@ ColumnLayout {
                 toolTipText: i18n("Disable to make panel fully transparent, removes contrast and blur effects.")
             }
         }
+        Label {
+            visible: !!!root.config.nativePanel.background.enabled && elementName === "panel" && root.elementState === Enum.WidgetStates.Normal
+            text: i18n("⚠️ Disabling this breaks the panel clickable area and applet dialogs positioning when the panel is in floating mode! See <a href=\"%1\">#80</a>.", "https://github.com/luisbocanegra/plasma-panel-colorizer/issues/80")
+            onLinkActivated: link => Qt.openUrlExternally(link)
+            font: Kirigami.Theme.smallFont
+            color: Kirigami.Theme.neutralTextColor
+            wrapMode: Label.Wrap
+            Layout.maximumWidth: 400
+            Layout.alignment: Qt.AlignTop
+            HoverHandler {
+                cursorShape: Qt.PointingHandCursor
+            }
+        }
         RowLayout {
             visible: elementName === "panel" && root.elementState === Enum.WidgetStates.Normal
             CheckBox {
@@ -170,7 +191,7 @@ ColumnLayout {
             }
         }
 
-        DoubleSpinBox {
+        DoubleSpinBoxCompat {
             id: widgetOpacity
             visible: root.elementName !== "panel"
             Kirigami.FormData.label: i18n("Opacity:")
@@ -188,7 +209,7 @@ ColumnLayout {
             Label {
                 text: i18n("Opacity:")
             }
-            DoubleSpinBox {
+            DoubleSpinBoxCompat {
                 id: opacitySpinbox
                 enabled: nativePanelBackgroundCheckbox.checked
                 from: 0 * multiplier
@@ -237,9 +258,34 @@ ColumnLayout {
                 }
             }
             Kirigami.ContextualHelpButton {
-                toolTipText: i18n("Make the System Tray expand button be the same width as the other tray items")
+                toolTipText: i18n("Make the System Tray expand button use the same size as the other tray items")
             }
-            visible: elementName === "trayWidgets" && root.elementState === Enum.WidgetStates.Normal
+            visible: elementName === "trayWidgets"
+        }
+
+        RowLayout {
+            visible: root.elementName === "trayWidgets"
+            Kirigami.FormData.label: root.vertical ? i18n("Custom cell height:") : i18n("Custom cell width:")
+            CheckBox {
+                checked: root.config.trayWidgets.customCellSizeEnabled
+                onCheckedChanged: {
+                    root.config.trayWidgets.customCellSizeEnabled = checked;
+                    root.updateConfig();
+                }
+            }
+
+            SpinBox {
+                id: trayCellSize
+                from: 20
+                to: 64
+                stepSize: 2
+                value: root.config.trayWidgets.customCellSize
+                onValueModified: {
+                    root.config.trayWidgets.customCellSize = value;
+                    root.updateConfig();
+                }
+                enabled: root.config.trayWidgets.customCellSizeEnabled
+            }
         }
 
         CheckBox {
@@ -252,29 +298,33 @@ ColumnLayout {
             visible: elementName === "panel" && root.elementState === Enum.WidgetStates.Normal && (floatingDialogsEnabledCheckbox.checked || root.plasmaVersion.isLowerThan("6.4.0"))
         }
 
-        CheckBox {
-            Kirigami.FormData.label: i18n("Anchor to edges:")
-            text: i18n("Resize content when panel enters/exits floating state")
-            checked: root.config.nativePanel.fillAreaOnDeFloat
-            onCheckedChanged: {
-                root.config.nativePanel.fillAreaOnDeFloat = checked;
-                root.updateConfig();
-            }
-            visible: root.plasmaVersion.isGreaterThan("6.3.5") && root.elementName === "panel" && root.elementState === Enum.WidgetStates.Normal
-        }
-
-        CheckBox {
-            id: flattenOnDeFloatCheckbox
-            Kirigami.FormData.label: i18n("Panel de-float:")
-            text: i18n("Remove custom background rounded corners and borders on screen edge when panel is not floating")
-            checked: configLocal.flattenOnDeFloat
-            onCheckedChanged: {
-                configLocal.flattenOnDeFloat = checked;
-                updateConfig();
-            }
-            Layout.maximumWidth: 400
-            Layout.alignment: Qt.AlignTop
+        ColumnLayout {
+            Kirigami.FormData.label: i18n("Floating panel:")
+            Kirigami.FormData.buddyFor: flattenOnDeFloatCheckbox
+            Kirigami.FormData.labelAlignment: Qt.AlignTop
+            spacing: Kirigami.Units.smallSpacing
             visible: root.elementName === "panel" && root.elementState === Enum.WidgetStates.Normal
+            CheckBox {
+                id: flattenOnDeFloatCheckbox
+                text: i18n("Remove custom background rounded corners and borders on screen edge when panel is not floating")
+                checked: root.configLocal.flattenOnDeFloat
+                onCheckedChanged: {
+                    root.configLocal.flattenOnDeFloat = checked;
+                    root.updateConfig();
+                }
+                Layout.maximumWidth: 400
+            }
+
+            CheckBox {
+                text: i18n("Resize panel length when panel enters/exits floating state (instead of just moving)")
+                checked: root.config.nativePanel.fillAreaOnDeFloat
+                onCheckedChanged: {
+                    root.config.nativePanel.fillAreaOnDeFloat = checked;
+                    root.updateConfig();
+                }
+                Layout.maximumWidth: 400
+                visible: root.plasmaVersion.isGreaterThan("6.3.5") && root.elementName === "panel" && root.elementState === Enum.WidgetStates.Normal
+            }
         }
 
         Kirigami.Separator {
@@ -385,6 +435,19 @@ ColumnLayout {
             }
         }
 
+        Label {
+            visible: !plasmoid.configuration.pluginFound
+            text: i18n("C++ plugin not found, this feature will not work. Install the plugin and reboot or restart plasmashell to be able to use it. See <a href=\"%1\">install instructions</a>.", "https://github.com/luisbocanegra/plasma-panel-colorizer?tab=readme-ov-file#manually")
+            onLinkActivated: link => Qt.openUrlExternally(link)
+            font: Kirigami.Theme.smallFont
+            wrapMode: Label.Wrap
+            Layout.maximumWidth: 400
+            Layout.alignment: Qt.AlignTop
+            HoverHandler {
+                cursorShape: Qt.PointingHandCursor
+            }
+        }
+
         RowLayout {
             Kirigami.FormData.label: i18n("Clipping (Experimental)")
             visible: root.showFontConfig
@@ -401,32 +464,14 @@ ColumnLayout {
 
         Label {
             visible: root.showFontConfig
-            text: i18n("Clip the widget content to the custom background radius.<br>Clipping widgets against the panel is not supported yet but is planned for a later version, see <a href=\"https://github.com/luisbocanegra/plasma-panel-colorizer/issues/275\">#275</a>.")
+            text: i18n("Clip the widget content to the custom background radius.<br>Clipping widgets against the panel is not supported yet, see <a href=\"%1\">#275</a>.", "https://github.com/luisbocanegra/plasma-panel-colorizer/issues/275")
             onLinkActivated: link => Qt.openUrlExternally(link)
             font: Kirigami.Theme.smallFont
             wrapMode: Label.Wrap
-            color: Kirigami.Theme.disabledTextColor
             Layout.maximumWidth: 400
             Layout.alignment: Qt.AlignTop
             HoverHandler {
                 cursorShape: Qt.PointingHandCursor
-            }
-        }
-
-        ColumnLayout {
-            visible: !plasmoid.configuration.pluginFound
-            Layout.preferredWidth: 300
-            Label {
-                text: i18n("C++ plugin not found, this feature will not work. Install the plugin and reboot or restart plasmashell to be able to use it.")
-                Layout.fillWidth: true
-                wrapMode: Text.Wrap
-            }
-            Button {
-                text: i18n("Plugin install instructions")
-                icon.name: "view-readermode-symbolic"
-                onClicked: {
-                    Qt.openUrlExternally("https://github.com/luisbocanegra/plasma-panel-colorizer?tab=readme-ov-file#manually");
-                }
             }
         }
     }
@@ -527,7 +572,7 @@ ColumnLayout {
             visible: (root.showFontConfig) && root.currentTab === 4
             text: i18n("A plasmashell restart is required to restore the original values after disabling any font setting. <a href=\"#\">Restart now</a>.")
             onLinkActivated: {
-                runCommand.run("systemctl restart --user plasma-plasmashell");
+                runCommand.exec("systemctl restart --user plasma-plasmashell");
             }
             font: Kirigami.Theme.smallFont
             color: Kirigami.Theme.disabledTextColor

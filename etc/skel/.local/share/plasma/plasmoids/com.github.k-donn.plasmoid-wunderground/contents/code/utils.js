@@ -52,7 +52,16 @@ var PRES_UNITS = {
 	INHG: 1,
 	MMHG: 2,
 	HPA: 3,
+	PSI: 4,
 };
+
+function mbToPsi(mb) {
+	return mb * 0.0145037738;
+}
+
+function psiToMb(psi) {
+	return psi / 0.0145037738;
+}
 
 var ELEV_UNITS = {
 	M: 0,
@@ -414,6 +423,18 @@ function mbToInhg(mb) {
 
 function mbToMmhg(mb) {
 	return mb * 0.750062;
+}
+
+function kToC(degK) {
+	return degK - 273.15;
+}
+
+function inhgToMb(inhg) {
+	return inhg / 0.02953;
+}
+
+function mmhgToMb(mmhg) {
+	return mmhg / 0.750062;
 }
 
 /**
@@ -1057,6 +1078,10 @@ function toUserPres(value) {
 			return mbToInhg(value);
 		} else if (plasmoid.configuration.presUnitsChoice === PRES_UNITS.MMHG) {
 			return mbToMmhg(value);
+		} else if (plasmoid.configuration.presUnitsChoice === PRES_UNITS.HPA) {
+			return value; // hPa and mb are equivalent
+		} else if (plasmoid.configuration.presUnitsChoice === PRES_UNITS.PSI) {
+			return mbToPsi(value);
 		} else {
 			return value;
 		}
@@ -1069,7 +1094,7 @@ function toUserPres(value) {
 /**
  * Return the user's choice of pressure unit with no additional data.
  *
- * @returns {"mb"|"inHG"|"mmHG"|"hPa"} User choosen unit
+ * @returns {"mb"|"inHG"|"mmHG"|"hPa"|"psi"} User choosen unit
  */
 function rawPresUnit() {
 	var res = "";
@@ -1086,6 +1111,10 @@ function rawPresUnit() {
 			res = "inHG";
 		} else if (plasmoid.configuration.presUnitsChoice === PRES_UNITS.MMHG) {
 			res = "mmHG";
+		} else if (plasmoid.configuration.presUnitsChoice === PRES_UNITS.HPA) {
+			res = "hPa";
+		} else if (plasmoid.configuration.presUnitsChoice === PRES_UNITS.PSI) {
+			res = "psi";
 		} else {
 			res = "hPa";
 		}
@@ -1175,13 +1204,23 @@ function calculateTimeDifference(startDate, endDate, isShowSeconds) {
 		`Calculating time difference between ${startDate} and ${endDate}`,
 	);
 	var diff = new Date(endDate).getTime() - new Date(startDate).getTime();
-	var diff_as_date = new Date(diff);
+	
+	if (isNaN(diff) || diff < 0) {
+		printDebug(`Invalid time difference: ${diff}`);
+		return "N/A";
+	}
 
-	printDebug(`Time difference reported as: ${diff_as_date}`);
+	var totalSeconds = Math.floor(diff / 1000);
+	var hours = Math.floor(totalSeconds / 3600);
+	var minutes = Math.floor((totalSeconds % 3600) / 60);
+	var seconds = totalSeconds % 60;
+
+	printDebug(`Time difference reported as: ${hours}h ${minutes}m ${seconds}s`);
+
 	if (isShowSeconds) {
-		return `${diff_as_date.getUTCHours()}h ${diff_as_date.getUTCMinutes()}m ${diff_as_date.getUTCSeconds()}s`;
+		return `${hours}h ${minutes}m ${seconds}s`;
 	} else {
-		return `${diff_as_date.getUTCHours()}h ${diff_as_date.getUTCMinutes()}m`;
+		return `${hours}h ${minutes}m`;
 	}
 }
 
@@ -1191,8 +1230,10 @@ function calculateNeedlePosition(startDate, endDate) {
 	var endTs = new Date(endDate).getTime();
 	var nowTs = new Date().getTime();
 
-	if (nowTs < startDate || nowTs > endDate) {
+	if (nowTs < startTs) {
 		return 0;
+	} else if (nowTs > endTs) {
+		return 100;
 	}
 
 	var diff = endTs - startTs;
@@ -1214,17 +1255,16 @@ function calculateNeedlePosition(startDate, endDate) {
 	return 100 - result;
 }
 
-function getDayLength(startDate, endDate) {
-	var dayLength = Utils.calculateTimeDifference(startDate, endDate, true);
+function getDayLength(startDate, endDate, isShowSeconds) {
+	var dayLength = Utils.calculateTimeDifference(startDate, endDate, isShowSeconds);
 
 	return dayLength;
 }
 
-function remainingUntilSinceDaylight(startDate, endDate) {
+function remainingUntilSinceDaylight(startDate, endDate, isShowSeconds) {
 	var rise = new Date(startDate);
 	var set = new Date(endDate);
 	var now = new Date();
-	var dayLength = Utils.calculateTimeDifference(rise, set, true);
 	var timeSunlight = "";
 
 	printDebug(`Rise ${rise}, Set: ${set}, Now: ${now}`);
@@ -1233,7 +1273,7 @@ function remainingUntilSinceDaylight(startDate, endDate) {
 		timeSunlight =
 			i18n("To sunrise") +
 			": " +
-			Utils.calculateTimeDifference(now, rise, false);
+			Utils.calculateTimeDifference(now, rise, isShowSeconds);
 
 		printDebug(` ${timeSunlight}`);
 	} else if (
@@ -1243,13 +1283,13 @@ function remainingUntilSinceDaylight(startDate, endDate) {
 		timeSunlight =
 			i18nc("Daylight remaining time, keep short", "Remaining") +
 			": " +
-			Utils.calculateTimeDifference(now, set, false);
+			Utils.calculateTimeDifference(now, set, isShowSeconds);
 		printDebug(` ${timeSunlight}`);
 	} else if (now.getTime() > set.getTime()) {
 		timeSunlight =
 			i18n("Since sunset") +
 			": " +
-			Utils.calculateTimeDifference(set, now, false);
+			Utils.calculateTimeDifference(set, now, isShowSeconds);
 		printDebug(`${timeSunlight}`);
 	}
 
@@ -1269,4 +1309,84 @@ function getMoonPhaseIcon(phaseCode) {
 	};
 
 	return moonPhasesDict[phaseCode];
+}
+
+/**
+ * Convert temperature from user units to degrees Celsius.
+ *
+ * @param {number} value Temperature in user units
+ * @returns {number} Temperature in degrees Celsius
+ */
+function userTempToC(value) {
+	if (unitsChoice === UNITS_SYSTEM.CUSTOM) {
+		if (plasmoid.configuration.tempUnitsChoice === TEMP_UNITS.C) {
+			return value;
+		} else if (plasmoid.configuration.tempUnitsChoice === TEMP_UNITS.F) {
+			return fToC(value);
+		} else {
+			return kToC(value);
+		}
+	} else {
+		if (unitsChoice === UNITS_SYSTEM.IMPERIAL) {
+			return fToC(value);
+		} else {
+			return value;
+		}
+	}
+}
+
+/**
+ * Convert pressure from user units to hPa (hectopascals).
+ *
+ * @param {number} value Pressure in user units
+ * @returns {number} Pressure in hPa
+ */
+function userPresToHpa(value) {
+	if (unitsChoice === UNITS_SYSTEM.CUSTOM) {
+		if (plasmoid.configuration.presUnitsChoice === PRES_UNITS.MB || plasmoid.configuration.presUnitsChoice === PRES_UNITS.HPA) {
+			return value;
+		} else if (plasmoid.configuration.presUnitsChoice === PRES_UNITS.INHG) {
+			return inhgToMb(value);
+		} else if (plasmoid.configuration.presUnitsChoice === PRES_UNITS.MMHG) {
+			return mmhgToMb(value);
+		} else if (plasmoid.configuration.presUnitsChoice === PRES_UNITS.PSI) {
+			return psiToMb(value);
+		}
+	} else {
+		if (unitsChoice === UNITS_SYSTEM.IMPERIAL) {
+			return inhgToMb(value);
+		} else {
+			return value;
+		}
+	}
+}
+
+/**
+ * Convert API temperature value to degrees Celsius.
+ * API units depend on unitsChoice: CUSTOM=C, IMPERIAL=F, METRIC/HYBRID=C
+ *
+ * @param {number} value Temperature from API
+ * @returns {number} Temperature in degrees Celsius
+ */
+function apiTempToC(value) {
+	if (unitsChoice === UNITS_SYSTEM.CUSTOM || unitsChoice === UNITS_SYSTEM.METRIC || unitsChoice === UNITS_SYSTEM.HYBRID) {
+		return value; // Already in C
+	} else if (unitsChoice === UNITS_SYSTEM.IMPERIAL) {
+		return fToC(value); // Convert F to C
+	}
+}
+
+/**
+ * Convert API pressure value to hPa (hectopascals).
+ * API units depend on unitsChoice: CUSTOM=mb, IMPERIAL=inHG, METRIC/HYBRID=mb
+ *
+ * @param {number} value Pressure from API
+ * @returns {number} Pressure in hPa
+ */
+function apiPresToHpa(value) {
+	if (unitsChoice === UNITS_SYSTEM.CUSTOM || unitsChoice === UNITS_SYSTEM.METRIC || unitsChoice === UNITS_SYSTEM.HYBRID) {
+		return value; // Already in mb/hPa
+	} else if (unitsChoice === UNITS_SYSTEM.IMPERIAL) {
+		return inhgToMb(value); // Convert inHG to mb
+	}
 }

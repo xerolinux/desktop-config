@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: colorizer\n"
 "Report-Msgid-Bugs-To: https://github.com/luisbocanegra/plasma-panel-"
 "colorizer\n"
-"POT-Creation-Date: 2026-02-05 20:38+0000\n"
+"POT-Creation-Date: 2026-04-12 03:26+0000\n"
 "PO-Revision-Date: 2026-01-24 16:46+0800\n"
 "Last-Translator: Mill Haruto <mill413@outlook.com>\n"
 "Language-Team: \n"
@@ -58,8 +58,12 @@ msgid "Global Overrides"
 msgstr "全局覆盖"
 
 #: ../contents/config/config.qml
-msgid "Text/Icon Fixes"
-msgstr "文本/图标修复"
+msgid "Text/Icon Color Fixes"
+msgstr ""
+
+#: ../contents/config/config.qml
+msgid "Blacklist Widgets"
+msgstr ""
 
 #: ../contents/config/config.qml
 msgid "Hide Widgets"
@@ -108,6 +112,7 @@ msgstr "边框"
 #: ../contents/ui/components/FormShape.qml ../contents/ui/configGeneral.qml
 #: ../contents/ui/configPresetAutoload.qml
 #: ../contents/ui/configStockPanelSettings.qml
+#: ../contents/ui/configWidgetIslands.qml
 msgid "Enabled:"
 msgstr "已启用："
 
@@ -365,6 +370,12 @@ msgid ""
 msgstr "禁用可使面板完全透明，移除此对比度和模糊效果。"
 
 #: ../contents/ui/components/FormWidgetSettings.qml
+msgid ""
+"⚠️ Disabling this breaks the panel clickable area and applet dialogs "
+"positioning when the panel is in floating mode! See <a href=\"%1\">#80</a>."
+msgstr ""
+
+#: ../contents/ui/components/FormWidgetSettings.qml
 msgid "The shadow from the Plasma theme"
 msgstr "来自 Plasma 主题的阴影"
 
@@ -401,7 +412,15 @@ msgstr ""
 
 #: ../contents/ui/components/FormWidgetSettings.qml
 msgid ""
-"Make the System Tray expand button be the same width as the other tray items"
+"Make the System Tray expand button use the same size as the other tray items"
+msgstr ""
+
+#: ../contents/ui/components/FormWidgetSettings.qml
+msgid "Custom cell height:"
+msgstr ""
+
+#: ../contents/ui/components/FormWidgetSettings.qml
+msgid "Custom cell width:"
 msgstr ""
 
 #: ../contents/ui/components/FormWidgetSettings.qml
@@ -409,22 +428,21 @@ msgid "Force floating applets"
 msgstr ""
 
 #: ../contents/ui/components/FormWidgetSettings.qml
-msgid "Anchor to edges:"
-msgstr ""
-
-#: ../contents/ui/components/FormWidgetSettings.qml
-msgid "Resize content when panel enters/exits floating state"
-msgstr "当面板进入/退出浮动状态时，调整内容大小"
-
-#: ../contents/ui/components/FormWidgetSettings.qml
-msgid "Panel de-float:"
-msgstr "取消面板浮动"
+#: ../contents/ui/configPresetAutoload.qml
+msgid "Floating panel:"
+msgstr "浮动面板时："
 
 #: ../contents/ui/components/FormWidgetSettings.qml
 msgid ""
 "Remove custom background rounded corners and borders on screen edge when "
 "panel is not floating"
 msgstr "当面板未浮动时，移除屏幕边缘的自定义背景圆角与边框。"
+
+#: ../contents/ui/components/FormWidgetSettings.qml
+msgid ""
+"Resize panel length when panel enters/exits floating state (instead of just "
+"moving)"
+msgstr ""
 
 #: ../contents/ui/components/FormWidgetSettings.qml
 msgid "Customization"
@@ -474,28 +492,21 @@ msgstr ""
 "才能生效。</strong>"
 
 #: ../contents/ui/components/FormWidgetSettings.qml
+msgid ""
+"C++ plugin not found, this feature will not work. Install the plugin and "
+"reboot or restart plasmashell to be able to use it. See <a "
+"href=\"%1\">install instructions</a>."
+msgstr ""
+
+#: ../contents/ui/components/FormWidgetSettings.qml
 msgid "Clipping (Experimental)"
 msgstr ""
 
 #: ../contents/ui/components/FormWidgetSettings.qml
 msgid ""
 "Clip the widget content to the custom background radius.<br>Clipping widgets "
-"against the panel is not supported yet but is planned for a later version, "
-"see <a href=\"https://github.com/luisbocanegra/plasma-panel-colorizer/"
-"issues/275\">#275</a>."
+"against the panel is not supported yet, see <a href=\"%1\">#275</a>."
 msgstr ""
-
-#: ../contents/ui/components/FormWidgetSettings.qml
-msgid ""
-"C++ plugin not found, this feature will not work. Install the plugin and "
-"reboot or restart plasmashell to be able to use it."
-msgstr ""
-"未找到 C++ 插件，该功能将无法使用。请安装插件并重启系统或 plasmashell 以启用"
-"此功能。"
-
-#: ../contents/ui/components/FormWidgetSettings.qml
-msgid "Plugin install instructions"
-msgstr "插件安装说明"
 
 #: ../contents/ui/components/FormWidgetSettings.qml
 msgid "Shape"
@@ -735,12 +746,16 @@ msgstr ""
 msgid "Translate %1 to your language"
 msgstr ""
 
+#: ../contents/ui/components/WidgetCardBlacklist.qml
 #: ../contents/ui/components/WidgetCardConfig.qml
 #: ../contents/ui/components/WidgetCardHide.qml
-#: ../contents/ui/components/WidgetCardIslands.qml
 #: ../contents/ui/components/WidgetCardTextIconFixes.qml
 msgid "System Tray"
 msgstr "系统托盘"
+
+#: ../contents/ui/components/WidgetCardBlacklist.qml
+msgid "Blacklist"
+msgstr ""
 
 #: ../contents/ui/components/WidgetCardConfig.qml
 msgid "Add"
@@ -749,18 +764,6 @@ msgstr "添加"
 #: ../contents/ui/components/WidgetCardHide.qml
 msgid "Hide"
 msgstr ""
-
-#: ../contents/ui/components/WidgetCardIslands.qml
-msgid "Disable"
-msgstr "禁用"
-
-#: ../contents/ui/components/WidgetCardIslands.qml
-msgid "Start"
-msgstr "起始"
-
-#: ../contents/ui/components/WidgetCardIslands.qml
-msgid "End"
-msgstr "结束"
 
 #: ../contents/ui/components/WidgetCardOverride.qml
 msgid "Edit"
@@ -812,6 +815,17 @@ msgstr "托盘挂件"
 
 #: ../contents/ui/configAppearance.qml
 msgid "Part of the panel on which the options below will be applied."
+msgstr ""
+
+#: ../contents/ui/configBlacklistWidgets.qml
+msgid ""
+"Blacklist widgets to keep their default appearance. A logout may be required "
+"for some widgets to fully restore their default appearance."
+msgstr ""
+
+#: ../contents/ui/configBlacklistWidgets.qml
+#: ../contents/ui/configTrayIconsReplacer.qml
+msgid "Remove all"
 msgstr ""
 
 #: ../contents/ui/configGeneral.qml
@@ -1075,10 +1089,6 @@ msgid "At least one window is visible:"
 msgstr "至少有一个窗口可见："
 
 #: ../contents/ui/configPresetAutoload.qml
-msgid "Floating panel:"
-msgstr "浮动面板时："
-
-#: ../contents/ui/configPresetAutoload.qml
 msgid "activity:"
 msgstr "活动："
 
@@ -1326,7 +1336,7 @@ msgid ""
 "configured preset auto-loading or know how to switch presets using D-Bus (or "
 "have disabled it), you will have no way to make it visible again without "
 "manually removing the configuration or Panel Colorizer, use the command "
-"below in terminal/tty then log out or reboot, it will renove the "
+"below in terminal/tty then log out or reboot, it will remove the "
 "configuration from all Panel Colorizer instances so make sure to save the "
 "others first"
 msgstr ""
@@ -1366,10 +1376,6 @@ msgstr "刷新间隔："
 
 #: ../contents/ui/configTrayIconsReplacer.qml
 msgid "Add new"
-msgstr ""
-
-#: ../contents/ui/configTrayIconsReplacer.qml
-msgid "Remove all"
 msgstr ""
 
 #: ../contents/ui/configTrayIconsReplacer.qml
@@ -1478,21 +1484,104 @@ msgid "Copy rule"
 msgstr ""
 
 #: ../contents/ui/configWidgetIslands.qml
-msgid ""
-"Select start and end of widget islands, widgets between <b>Start</b> and "
-"<b>End</b> must be left <b>disabled</b>. Widget custom background or border "
-"is required for this option to have an effect."
+msgid "Create widget islands by placing separator widgets around them."
 msgstr ""
-"选择widget islands的起始和结束，在<b>起始</b>和<b>结束</b>间的挂件需保持禁"
-"用。 设置挂件自定义背景或边框后才会生效。"
 
 #: ../contents/ui/configWidgetIslands.qml
-msgid "Remove all islands"
+msgid ""
+"<strong>How to use</strong><br>1. Add the widget that will act as islands "
+"separator to the panel(by default the Plasma's Panel Spacer widget will be "
+"used)<br>2. Select the separator widget below<br>3. Add as many separators "
+"as you need and move them to create islands."
+msgstr ""
+
+#: ../contents/ui/configWidgetIslands.qml
+msgid ""
+"<strong>Notes</strong><br>- Widget custom background or border is required "
+"for this option to have a visible effect.<br>- If the widgets in your panel "
+"have different thickness, add margins to the widgets custom background in "
+"the Appearance tab."
+msgstr ""
+
+#: ../contents/ui/configWidgetIslands.qml
+msgid ""
+"<strong>Need a separator widget?</strong><br>- <a href=\"%1\">Panel "
+"Colorizer Islands Separator</a> visible only in Edit Mode.<br>- <a "
+"href=\"%2\">Advanced Separator</a> always visible and configurable."
+msgstr ""
+
+#: ../contents/ui/configWidgetIslands.qml
+msgid "Separator widget:"
+msgstr ""
+
+#: ../contents/ui/configWidgetIslands.qml
+msgid ""
+"Select the widget that will act as separator for the islands.<br><br>Note "
+"that the separator widget itself does not need to be visible for it to work, "
+"so you can use an invisible spacer/separator for example."
+msgstr ""
+
+#: ../contents/ui/configWidgetIslands.qml
+msgid "Require two separators per island:"
+msgstr ""
+
+#: ../contents/ui/configWidgetIslands.qml
+msgid ""
+"Always require two separators for a group of widgets to become an island. By "
+"default, an arrangement of<br>%1 creates two islands.<br><br>Enabling this "
+"option makes it so that islands do not share separators, so for example an "
+"arrangement of<br>%2 is required to create two islands.<br><br>Enable this "
+"if your islands separator is not a panel spacer and you want to explicitly "
+"define the start and end of each island."
+msgstr ""
+
+#: ../contents/ui/configWidgetIslands.qml
+msgid "Blacklist separator widgets:"
+msgstr ""
+
+#: ../contents/ui/configWidgetIslands.qml
+msgid "Disable customization from separator widgets"
 msgstr ""
 
 #: ../contents/ui/main.qml
 msgid "Hide widget (visible in panel Edit Mode)"
 msgstr "隐藏挂件（面板编辑模式下可见）"
+
+#~ msgid "Disable"
+#~ msgstr "禁用"
+
+#~ msgid "Start"
+#~ msgstr "起始"
+
+#~ msgid "End"
+#~ msgstr "结束"
+
+#~ msgid ""
+#~ "Select start and end of widget islands, widgets between <b>Start</b> and "
+#~ "<b>End</b> must be left <b>disabled</b>. Widget custom background or "
+#~ "border is required for this option to have an effect."
+#~ msgstr ""
+#~ "选择widget islands的起始和结束，在<b>起始</b>和<b>结束</b>间的挂件需保持禁"
+#~ "用。 设置挂件自定义背景或边框后才会生效。"
+
+#~ msgid "Text/Icon Fixes"
+#~ msgstr "文本/图标修复"
+
+#~ msgid "Resize content when panel enters/exits floating state"
+#~ msgstr "当面板进入/退出浮动状态时，调整内容大小"
+
+#~ msgid "Panel de-float:"
+#~ msgstr "取消面板浮动"
+
+#~ msgid ""
+#~ "C++ plugin not found, this feature will not work. Install the plugin and "
+#~ "reboot or restart plasmashell to be able to use it."
+#~ msgstr ""
+#~ "未找到 C++ 插件，该功能将无法使用。请安装插件并重启系统或 plasmashell 以启"
+#~ "用此功能。"
+
+#~ msgid "Plugin install instructions"
+#~ msgstr "插件安装说明"
 
 #~ msgid ""
 #~ "<strong>Odd</strong> values are automatically converted to <strong>evens</"

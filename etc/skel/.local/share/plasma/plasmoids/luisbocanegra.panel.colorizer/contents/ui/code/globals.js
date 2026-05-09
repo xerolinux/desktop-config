@@ -323,6 +323,8 @@ const defaultConfig = {
         needsAttention: baseTrayConfig,
         expanded: baseTrayConfig,
         wideTrayArrow: false,
+        customCellSizeEnabled: false,
+        customCellSize: 22,
     },
     nativePanel: {
         background: {
@@ -339,7 +341,6 @@ const defaultConfig = {
         overrides: {},
         associations: [],
     },
-    unifiedBackground: [],
 };
 
 const ignoredConfigs = [
@@ -367,6 +368,11 @@ const ignoredConfigs = [
     "systemTrayIconUserReplacements",
     "systemTrayIconBuiltinReplacementsEnabled",
     "logSystemTrayIconChanges",
+    "islandSeparatorPairing",
+    "islandSeparatorWidget",
+    "islandSeparatorWidget",
+    "islandsEnabled",
+    "blacklistIslandSeparator"
 ];
 
 const editModeGridSettings = {

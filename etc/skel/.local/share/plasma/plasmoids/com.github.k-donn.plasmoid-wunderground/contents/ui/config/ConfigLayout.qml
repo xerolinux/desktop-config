@@ -16,12 +16,11 @@
  */
 
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Controls as QQC
 import org.kde.kirigami as Kirigami
 import org.kde.kcmutils as KCM
 import org.kde.plasma.components as PlasmaComponents
-import "../lib" as Lib
 
 KCM.SimpleKCM {
 
@@ -29,10 +28,14 @@ KCM.SimpleKCM {
     property int cfg_layoutType
     property int cfg_widgetOrder
     property int cfg_planarLayoutType
+    property int cfg_propIconSize
+    property int cfg_forecastIconSize
 
     property alias cfg_propHeadPointSize: propHeadPointSize.value
     property alias cfg_propPointSize: propPointSize.value
     property alias cfg_tempPointSize: tempPointSize.value
+    property alias cfg_propIconSizeIndex: propIconSize.currentIndex
+    property alias cfg_forecastIconSizeIndex: forecastIconSize.currentIndex
     property alias cfg_topIconMargins: topIconMargins.value
 
     property string cfg_leftOuterMargin: plasmoid.configuration.leftOuterMargin
@@ -40,7 +43,6 @@ KCM.SimpleKCM {
     property string cfg_rightOuterMargin: plasmoid.configuration.rightOuterMargin
     property string cfg_topOuterMargin: plasmoid.configuration.topOuterMargin
     property string cfg_bottomOuterMargin: plasmoid.configuration.bottomOuterMargin
-
 
     onCfg_layoutTypeChanged: {
         switch (cfg_layoutType) {
@@ -57,7 +59,7 @@ KCM.SimpleKCM {
         }
     }
 
-    ButtonGroup {
+    QQC.ButtonGroup {
         id: layoutTypeGroup
 
         Component.onCompleted: {
@@ -77,7 +79,7 @@ KCM.SimpleKCM {
         }
     }
 
-    ButtonGroup {
+    QQC.ButtonGroup {
         id: widgetOrderGroup
 
         Component.onCompleted: {
@@ -97,7 +99,7 @@ KCM.SimpleKCM {
         }
     }
 
-    ButtonGroup {
+    QQC.ButtonGroup {
         id: planarLayoutTypeGroup
 
         Component.onCompleted: {
@@ -105,7 +107,53 @@ KCM.SimpleKCM {
         }
     }
 
+    onCfg_propIconSizeIndexChanged: {
+        switch (cfg_propIconSizeIndex) {
+            case 0:
+                cfg_propIconSize = 16;
+                break;
+            case 1:
+                cfg_propIconSize = 22;
+                break;
+            case 2:
+                cfg_propIconSize = 32;
+                break;
+            case 3:
+                cfg_propIconSize = 48;
+                break;
+            case 4:
+                cfg_propIconSize = 64;
+                break;
+            case 5:
+                cfg_propIconSize = 128;
+                break;
+            default:
+        }
+    }
 
+    onCfg_forecastIconSizeIndexChanged: {
+        switch (cfg_forecastIconSizeIndex) {
+            case 0:
+                cfg_forecastIconSize = 16;
+                break;
+            case 1:
+                cfg_forecastIconSize = 22;
+                break;
+            case 2:
+                cfg_forecastIconSize = 32;
+                break;
+            case 3:
+                cfg_forecastIconSize = 48;
+                break;
+            case 4:
+                cfg_forecastIconSize = 64;
+                break;
+            case 5:
+                cfg_forecastIconSize = 128;
+                break;
+            default:
+        }
+    }
 
     Kirigami.FormLayout {
         anchors.fill: parent
@@ -119,16 +167,16 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: i18n("Planar layout") + ":"
             Kirigami.FormData.labelAlignment: Qt.AlignTop
 
-            RadioButton {
+            QQC.RadioButton {
                 id: planarLayoutTypeRadioFull
-                ButtonGroup.group: planarLayoutTypeGroup
+                QQC.ButtonGroup.group: planarLayoutTypeGroup
                 text: i18n("Full Representation")
                 onCheckedChanged: if (checked) cfg_planarLayoutType = 0;
             }
 
-            RadioButton {
+            QQC.RadioButton {
                 id: planarLayoutTypeRadioCompact
-                ButtonGroup.group: planarLayoutTypeGroup
+                QQC.ButtonGroup.group: planarLayoutTypeGroup
                 text: i18n("Compact Representation")
                 onCheckedChanged: if (checked) cfg_planarLayoutType = 1;
             }
@@ -143,7 +191,7 @@ KCM.SimpleKCM {
             Kirigami.FormData.isSection: true
         }
 
-        PlasmaComponents.SpinBox {
+        QQC.SpinBox {
             id: propHeadPointSize
 
             editable: true
@@ -151,7 +199,7 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: i18n("Property header text size")
         }
 
-        PlasmaComponents.SpinBox {
+        QQC.SpinBox {
             id: propPointSize
 
             editable: true
@@ -159,7 +207,7 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: i18n("Property text size")
         }
 
-        PlasmaComponents.SpinBox {
+        QQC.SpinBox {
             id: tempPointSize
 
             editable: true
@@ -167,40 +215,23 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: i18n("Temperature text size")
         }
 
-        Lib.ConfigComboBox {
-            configKey: "detailsIconSize"
+        QQC.ComboBox {
+            id: forecastIconSize
 
-            model: [
-                {
-                    value: 16,
-                    text: i18n("small (16x16)")
-                },
-                {
-                    value: 22,
-                    text: i18n("smallMedium (22x22)")
-                },
-                {
-                    value: 32,
-                    text: i18n("medium (32x32)")
-                },
-                {
-                    value: 48,
-                    text: i18n("large (48x48)")
-                },
-                {
-                    value: 64,
-                    text: i18n("huge (64x64)")
-                },
-                {
-                    value: 128,
-                    text: i18n("enormous (128x128)")
-                }
-            ]
+            model: [i18n("small (16x16)"),i18n("smallMedium (22x22)"),i18n("medium (32x32)"),i18n("large (48x48)"),i18n("huge (64x64)"),i18n("enormous (128x128)")]
 
-            Kirigami.FormData.label: i18n("Details icon size:")
+            Kirigami.FormData.label: i18n("Forecast icon size:")
         }
 
-        PlasmaComponents.SpinBox {
+        QQC.ComboBox {
+            id: propIconSize
+
+            model: [i18n("small (16x16)"),i18n("smallMedium (22x22)"),i18n("medium (32x32)"),i18n("large (48x48)"),i18n("huge (64x64)"),i18n("enormous (128x128)")]
+
+            Kirigami.FormData.label: i18n("Property icon size:")
+        }
+
+        QQC.SpinBox {
             id: topIconMargins
 
             editable: true
@@ -218,23 +249,23 @@ KCM.SimpleKCM {
             Kirigami.FormData.labelAlignment: Qt.AlignTop
 
 
-            PlasmaComponents.RadioButton {
+            QQC.RadioButton {
                 id: layoutTypeRadioHorizontal
-                ButtonGroup.group: layoutTypeGroup
+                QQC.ButtonGroup.group: layoutTypeGroup
                 text: i18n("Horizontal")
                 onCheckedChanged: if (checked) cfg_layoutType = 0;
             }
 
-            PlasmaComponents.RadioButton {
+            QQC.RadioButton {
                 id: layoutTypeRadioVertical
-                ButtonGroup.group: layoutTypeGroup
+                QQC.ButtonGroup.group: layoutTypeGroup
                 text: i18n("Vertical")
                 onCheckedChanged: if (checked) cfg_layoutType = 1;
             }
 
-            PlasmaComponents.RadioButton {
+            QQC.RadioButton {
                 id: layoutTypeRadioCompact
-                ButtonGroup.group: layoutTypeGroup
+                QQC.ButtonGroup.group: layoutTypeGroup
                 text: i18n("Compressed")
                 onCheckedChanged: if (checked) cfg_layoutType = 2;
             }
@@ -249,15 +280,15 @@ KCM.SimpleKCM {
             Kirigami.FormData.labelAlignment: Qt.AlignTop
 
 
-            PlasmaComponents.RadioButton {
+            QQC.RadioButton {
                 id: widgetOrderIconFirst
-                ButtonGroup.group: widgetOrderGroup
+                QQC.ButtonGroup.group: widgetOrderGroup
                 text: i18n("Icon first")
                 onCheckedChanged: if (checked) cfg_widgetOrder = 0;
             }
-            PlasmaComponents.RadioButton {
+            QQC.RadioButton {
                 id: widgetOrderTextFirst
-                ButtonGroup.group: widgetOrderGroup
+                QQC.ButtonGroup.group: widgetOrderGroup
                 text: i18n("Text first")
                 onCheckedChanged: if (checked) cfg_widgetOrder = 1;
             }
@@ -271,7 +302,7 @@ KCM.SimpleKCM {
         Row {
             Kirigami.FormData.label: i18n("Top Margin") + ":"
 
-            PlasmaComponents.SpinBox {
+            QQC.SpinBox {
                 id: topOuterMargin
                 stepSize: 1
                 from: -999
@@ -290,7 +321,7 @@ KCM.SimpleKCM {
         Row {
             Kirigami.FormData.label: i18n("Bottom Margin") + ":"
 
-            PlasmaComponents.SpinBox {
+            QQC.SpinBox {
                 id: bottomOuterMargin
                 stepSize: 1
                 from: -999
@@ -309,7 +340,7 @@ KCM.SimpleKCM {
         Row {
             Kirigami.FormData.label: i18n("Left Margin") + ":"
 
-            PlasmaComponents.SpinBox {
+            QQC.SpinBox {
                 id: leftOuterMargin
                 stepSize: 1
                 from: -999
@@ -328,7 +359,7 @@ KCM.SimpleKCM {
         Row {
             Kirigami.FormData.label: i18n("Right Margin") + ":"
 
-            PlasmaComponents.SpinBox {
+            QQC.SpinBox {
                 id: rightOuterMargin
                 stepSize: 1
                 from: -999
@@ -347,7 +378,7 @@ KCM.SimpleKCM {
         Row {
             Kirigami.FormData.label: i18n("Inner Margin") + ":"
 
-            PlasmaComponents.SpinBox {
+            QQC.SpinBox {
                 id: innerMargin
                 stepSize: 1
                 from: -999

@@ -31,6 +31,7 @@ ColumnLayout {
     property string iconNameStr: Utils.getConditionIcon(root.iconCode, plasmoid.configuration.useSystemThemeIcons)
     property string sunrise: weatherData["sunrise"]
     property string sunset: weatherData["sunset"]
+    property bool showTimeSeconds: plasmoid.configuration.showTimeSeconds
 
     Timer {
         id: sunTimer
@@ -39,8 +40,8 @@ ColumnLayout {
         interval: 60 * 1000
         
         onTriggered: {
-            dayLength.text = Utils.getDayLength(weatherData["sunrise"],weatherData["sunset"])
-            dayLightCaption.text = Utils.remainingUntilSinceDaylight(weatherData["sunrise"],weatherData["sunset"])
+            dayLength.text = Utils.getDayLength(weatherData["sunrise"],weatherData["sunset"], showTimeSeconds)
+            dayLightCaption.text = Utils.remainingUntilSinceDaylight(weatherData["sunrise"],weatherData["sunset"], showTimeSeconds)
             circularSlider.value = Utils.calculateNeedlePosition(weatherData["sunrise"],weatherData["sunset"])
         }
     }
@@ -50,6 +51,10 @@ ColumnLayout {
     }
 
     onSunsetChanged: {
+        sunTimer.triggered()
+    }
+
+    onShowTimeSecondsChanged: {
         sunTimer.triggered()
     }
 
@@ -142,6 +147,7 @@ ColumnLayout {
             PlasmaComponents.Label {
                 id: dayLightCaption
                 text: "day remaining"
+                font.pointSize: plasmoid.configuration.propPointSize
                 horizontalAlignment: Text.AlignHCenter
                 Layout.alignment: Qt.AlignCenter
             }
@@ -188,7 +194,7 @@ ColumnLayout {
                 }
                 PlasmaComponents.Label {
                     text: conditionNarrative
-                    font.pointSize: plasmoid.configuration.propPointSize - 1
+                    font.pointSize: plasmoid.configuration.propPointSize
                 }
             }
         }
@@ -210,14 +216,14 @@ ColumnLayout {
                     }
 
                     PlasmaComponents.Label {
-                        text: Qt.formatDateTime(moonrise, plasmoid.configuration.sunMoonTimeFormat)
+                        text: Qt.formatDateTime(weatherData["moonrise"], plasmoid.configuration.sunMoonTimeFormat)
                         font.pointSize: plasmoid.configuration.propPointSize
                         font.bold: true
                     }
                 }
 
                 PlasmaComponents.Label {
-                    text: Utils.getMoonPhaseIcon(moonPhaseCode)
+                    text: Utils.getMoonPhaseIcon(weatherData["moonPhaseCode"])
                     font.family: "weather-icons"
                     font.pixelSize: Kirigami.Units.iconSizes.medium
                     horizontalAlignment: Text.AlignHCenter
@@ -232,7 +238,7 @@ ColumnLayout {
                     }
 
                     PlasmaComponents.Label {
-                        text: Qt.formatDateTime(moonset, plasmoid.configuration.sunMoonTimeFormat)
+                        text: Qt.formatDateTime(weatherData["moonset"], plasmoid.configuration.sunMoonTimeFormat)
                         font.pointSize: plasmoid.configuration.propPointSize
                         font.bold: true
                     }
@@ -240,7 +246,8 @@ ColumnLayout {
             }
 
             PlasmaComponents.Label {
-                text: moonPhase
+                text: weatherData["moonPhase"]
+                font.pointSize: plasmoid.configuration.propPointSize
                 horizontalAlignment: Text.AlignHCenter
                 Layout.alignment: Qt.AlignCenter
             }
@@ -248,7 +255,7 @@ ColumnLayout {
     }
 
     PlasmaComponents.Label {
-        text: blurb
+        text: weatherData["blurb"]
         visible: plasmoid.configuration.showBlurb
         font.pointSize: plasmoid.configuration.propPointSize
         horizontalAlignment: Text.AlignHCenter
@@ -277,8 +284,8 @@ ColumnLayout {
                 // wind barb icons are 270 degrees deviated from 0 degrees (north)
                 rotation: weatherData["winddir"] - 270
 
-                Layout.minimumWidth: Kirigami.Units.iconSizes.medium
-                Layout.minimumHeight: Kirigami.Units.iconSizes.medium
+                Layout.minimumWidth: plasmoid.configuration.propIconSize
+                Layout.minimumHeight: plasmoid.configuration.propIconSize
                 Layout.preferredWidth: Layout.minimumWidth
                 Layout.preferredHeight: Layout.minimumHeight
                 Layout.alignment: Qt.AlignCenter
@@ -323,7 +330,7 @@ ColumnLayout {
             }
             PlasmaComponents.Label {
                 text: i18n("Wind from: %1 (%2°)", Utils.windDirToCard(weatherData["winddir"]), weatherData["winddir"])
-                font.pointSize: plasmoid.configuration.propPointSize
+                font.pointSize: plasmoid.configuration.propHeadPointSize
                 Layout.alignment: Qt.AlignCenter
             }
             PlasmaComponents.Label {
@@ -341,13 +348,13 @@ ColumnLayout {
             PlasmaComponents.Label {
                 text: "\uF03F"
                 font.family: "weather-icons"
-                font.pixelSize: Kirigami.Units.iconSizes.medium * 1.1
+                font.pixelSize: plasmoid.configuration.propIconSize
                 horizontalAlignment: Text.AlignHCenter
                 Layout.alignment: Qt.AlignCenter
             }
             PlasmaComponents.Label {
                 text: i18n("Wind & Gust")
-                font.pointSize: plasmoid.configuration.propPointSize
+                font.pointSize: plasmoid.configuration.propHeadPointSize
                 Layout.alignment: Qt.AlignCenter
             }
             PlasmaComponents.Label {
@@ -366,13 +373,13 @@ ColumnLayout {
             PlasmaComponents.Label {
                 text: "\uF05C"
                 font.family: "weather-icons"
-                font.pixelSize: Kirigami.Units.iconSizes.medium * 1.1
+                font.pixelSize: plasmoid.configuration.propIconSize
                 horizontalAlignment: Text.AlignHCenter
                 Layout.alignment: Qt.AlignCenter
             }
             PlasmaComponents.Label {
                 text: i18n("Dew Point")
-                font.pointSize: plasmoid.configuration.propPointSize
+                font.pointSize: plasmoid.configuration.propHeadPointSize
                 Layout.alignment: Qt.AlignCenter
             }
             PlasmaComponents.Label {
@@ -391,13 +398,13 @@ ColumnLayout {
             PlasmaComponents.Label {
                 text: "\uF04C"
                 font.family: "weather-icons"
-                font.pixelSize: Kirigami.Units.iconSizes.medium
+                font.pixelSize: plasmoid.configuration.propIconSize
                 horizontalAlignment: Text.AlignHCenter
                 Layout.alignment: Qt.AlignCenter
             }
             PlasmaComponents.Label {
                 text: i18n("Precip Rate")
-                font.pointSize: plasmoid.configuration.propPointSize
+                font.pointSize: plasmoid.configuration.propHeadPointSize
                 Layout.alignment: Qt.AlignCenter
             }
             PlasmaComponents.Label {
@@ -416,13 +423,13 @@ ColumnLayout {
             PlasmaComponents.Label {
                 text: "\uF00A"
                 font.family: "weather-icons"
-                font.pixelSize: Kirigami.Units.iconSizes.medium * 1.1
+                font.pixelSize: plasmoid.configuration.propIconSize
                 horizontalAlignment: Text.AlignHCenter
                 Layout.alignment: Qt.AlignCenter
             }
             PlasmaComponents.Label {
                 text: i18n("Pressure")
-                font.pointSize: plasmoid.configuration.propPointSize
+                font.pointSize: plasmoid.configuration.propHeadPointSize
                 Layout.alignment: Qt.AlignCenter
             }
             Row {
@@ -467,13 +474,13 @@ ColumnLayout {
             PlasmaComponents.Label {
                 text: "\uF008"
                 font.family: "weather-icons"
-                font.pixelSize: Kirigami.Units.iconSizes.medium * 1.1
+                font.pixelSize: plasmoid.configuration.propIconSize
                 horizontalAlignment: Text.AlignHCenter
                 Layout.alignment: Qt.AlignCenter
             }
             PlasmaComponents.Label {
                 text: i18n("Humidity")
-                font.pointSize: plasmoid.configuration.propPointSize
+                font.pointSize: plasmoid.configuration.propHeadPointSize
                 Layout.alignment: Qt.AlignCenter
             }
             PlasmaComponents.Label {
@@ -492,13 +499,13 @@ ColumnLayout {
             PlasmaComponents.Label {
                 text: "\uF062"
                 font.family: "weather-icons"
-                font.pixelSize: Kirigami.Units.iconSizes.medium * 1.1
+                font.pixelSize: plasmoid.configuration.propIconSize
                 horizontalAlignment: Text.AlignHCenter
                 Layout.alignment: Qt.AlignCenter
             }
             PlasmaComponents.Label {
                 text: i18n("Precip Accum")
-                font.pointSize: plasmoid.configuration.propPointSize
+                font.pointSize: plasmoid.configuration.propHeadPointSize
                 Layout.alignment: Qt.AlignCenter
             }
             PlasmaComponents.Label {
@@ -517,13 +524,13 @@ ColumnLayout {
             PlasmaComponents.Label {
                 text: "\uF061"
                 font.family: "weather-icons"
-                font.pixelSize: Kirigami.Units.iconSizes.medium * 1.1
+                font.pixelSize: plasmoid.configuration.propIconSize
                 horizontalAlignment: Text.AlignHCenter
                 Layout.alignment: Qt.AlignCenter
             }
             PlasmaComponents.Label {
                 text: i18n("UV")
-                font.pointSize: plasmoid.configuration.propPointSize
+                font.pointSize: plasmoid.configuration.propHeadPointSize
                 Layout.alignment: Qt.AlignCenter
             }
             PlasmaComponents.Label {

@@ -8,15 +8,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plasmoid-wunderground\n"
 "Report-Msgid-Bugs-To: https://github.com/k-donn/plasmoid-wunderground\n"
-"POT-Creation-Date: 2026-03-08 17:58-0500\n"
-"PO-Revision-Date: 2026-03-10 18:34+0100\n"
+"POT-Creation-Date: 2026-04-26 18:46-0500\n"
+"PO-Revision-Date: 2026-04-14 00:03+0200\n"
 "Last-Translator: Martin Eilsøe <martin@eilsoe.dk>\n"
 "Language-Team: <ll@li.org>\n"
 "Language: da_DK\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.8\n"
+"X-Generator: Poedit 3.9\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: .\n"
 
 #: ../metadata.json
 msgid "Wunderground"
@@ -64,48 +66,52 @@ msgid "Debug"
 msgstr "Fejlret"
 
 #: ../contents/ui/AirAndSolarItem.qml
-msgid "Status Color"
-msgstr "Status farve"
+msgid "Comfortable"
+msgstr "Behageligt"
+
+#: ../contents/ui/AirAndSolarItem.qml
+msgid "Moderate"
+msgstr "Moderat"
+
+#: ../contents/ui/AirAndSolarItem.qml
+msgid "Unfavorable"
+msgstr "Ugunstigt"
 
 #: ../contents/ui/AirAndSolarItem.qml
 msgid "Air quality"
 msgstr "Luft kvalitet"
 
 #: ../contents/ui/AirAndSolarItem.qml
-msgid "Messages"
-msgstr "Meddelelser"
+msgid "AQI"
+msgstr "AQI"
 
 #: ../contents/ui/AirAndSolarItem.qml
-msgid "AQI: %1"
-msgstr "AQI: %1"
+msgid "AQHI"
+msgstr "AQHI"
+
+#: ../contents/ui/AirAndSolarItem.qml ../contents/ui/AlertsItem.qml
+msgid "Alerts"
+msgstr "Varsler"
 
 #: ../contents/ui/AirAndSolarItem.qml
-msgid "AQHI: %1"
-msgstr "AQHI: %1"
-
-#: ../contents/ui/AirAndSolarItem.qml
-msgid "Primary pollutant: "
-msgstr "Primær forurening: "
-
-#: ../contents/ui/AirAndSolarItem.qml
-msgid "Amount: %1 %2<br/>Description: %3<br/>Index: %4"
-msgstr "Antal: %1 %2<br/>Beskrivelse: %3<br/>Indeks: %4"
+msgid "Info"
+msgstr "Info"
 
 #: ../contents/ui/AirAndSolarItem.qml
 msgid "Solar info"
 msgstr "Sol info"
 
 #: ../contents/ui/AirAndSolarItem.qml
-msgid "Sunrise"
-msgstr "Solopgang"
+msgid "Kp-index"
+msgstr "Kp-indeks"
 
 #: ../contents/ui/AirAndSolarItem.qml
-msgid "Sunset"
-msgstr "Solnedgang"
+msgid "Power"
+msgstr "Styrke"
 
-#: ../contents/ui/AlertsItem.qml
-msgid "Alerts"
-msgstr "Varsler"
+#: ../contents/ui/AirAndSolarItem.qml
+msgid "Health index"
+msgstr "Sundhedsindeks"
 
 #: ../contents/ui/AlertsItem.qml
 msgid "There are no alerts for your area."
@@ -199,6 +205,10 @@ msgstr ""
 msgid "Sorry! The widget ran into a network error: "
 msgstr "Der opstod en netværksfejl: "
 
+#: ../contents/ui/FullRepresentation.qml
+msgid "Refresh Weather"
+msgstr ""
+
 #: ../contents/ui/SwitchPanel.qml ../contents/ui/config/ConfigAppearance.qml
 msgid "Weather Details"
 msgstr "Vejrdata"
@@ -210,7 +220,7 @@ msgstr "Vejrudsigt"
 
 #: ../contents/ui/SwitchPanel.qml ../contents/ui/config/ConfigAppearance.qml
 msgid "Day Chart"
-msgstr "Dag diagram"
+msgstr "Dagsudsigt"
 
 #: ../contents/ui/SwitchPanel.qml ../contents/ui/config/ConfigAppearance.qml
 msgid "More Info"
@@ -263,6 +273,10 @@ msgstr "Fuld visning"
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Auto-color temperature:"
 msgstr "Aut. farve temp:"
+
+#: ../contents/ui/config/ConfigAppearance.qml
+msgid "Show time seconds:"
+msgstr "Vis sekunder i tid:"
 
 #: ../contents/ui/config/ConfigAppearance.qml
 msgid "Show blurb:"
@@ -401,8 +415,12 @@ msgid "enormous (128x128)"
 msgstr "enorm (128x128)"
 
 #: ../contents/ui/config/ConfigLayout.qml
-msgid "Details icon size:"
-msgstr "Detaljer ikon str.:"
+msgid "Forecast icon size:"
+msgstr "Vejrudsigt ikon str.:"
+
+#: ../contents/ui/config/ConfigLayout.qml
+msgid "Property icon size:"
+msgstr "Egenskab ikon str.:"
 
 #: ../contents/ui/config/ConfigLayout.qml
 msgid "Top panel icon margins:"
@@ -507,28 +525,56 @@ msgid "Time/Date Format"
 msgstr "Tid/dato format"
 
 #: ../contents/ui/config/ConfigUnits.qml
+msgid "Sun/Moon time format:"
+msgstr "Sol/Måne tidsformat:"
+
+#: ../contents/ui/config/ConfigUnits.qml
+msgid "12hr time"
+msgstr "12 timers ur"
+
+#: ../contents/ui/config/ConfigUnits.qml
+msgid "24hr time"
+msgstr "24 timers ur"
+
+#: ../contents/ui/config/ConfigUnits.qml
+msgid "Custom"
+msgstr "Tilpasset"
+
+#: ../contents/ui/config/ConfigUnits.qml
 msgid "Day Chart time format:"
-msgstr "Dag diagram tidsformat:"
+msgstr "Dagsudsigt tidsformat:"
+
+#: ../contents/ui/config/ConfigUnits.qml
+msgid "Time format"
+msgstr "Tidsformat"
 
 #: ../contents/ui/config/ConfigUnits.qml
 msgid "Week forecast date format:"
-msgstr "Uge vejrudsigt dato format:"
+msgstr "Vejrudsigt dato format:"
 
 #: ../contents/ui/config/ConfigUnits.qml
-msgid "Sun/Moon time format:"
-msgstr "Sol/Måne tidsformat:"
+msgid "Day"
+msgstr "Dag"
+
+#: ../contents/ui/config/ConfigUnits.qml
+msgid "Day/Month"
+msgstr "Dag/Måned"
+
+#: ../contents/ui/config/ConfigUnits.qml
+msgid "Date format"
+msgstr "Datoformat"
 
 #: ../contents/ui/config/ConfigUnits.qml
 msgid "Precision"
 msgstr "Præcision"
 
-#: ../contents/ui/config/ConfigUnits.qml ../contents/ui/main.qml
-msgid "Temperature"
-msgstr "Temperatur"
-
 #: ../contents/ui/config/ConfigUnits.qml
 msgid "Compact Rep Temperature"
 msgstr "Kompakt rep. temp."
+
+#: ../contents/ui/config/ConfigUnits.qml ../contents/ui/main.qml
+msgid "Temperature"
+msgstr "Temperatur"
 
 #: ../contents/ui/config/ConfigUnits.qml
 msgctxt "The unit system"
@@ -544,10 +590,6 @@ msgstr "Imperial"
 msgctxt "The unit system"
 msgid "Hybrid (UK)"
 msgstr "Hybrid (UK)"
-
-#: ../contents/ui/config/ConfigUnits.qml
-msgid "Custom"
-msgstr "Tilpasset"
 
 #: ../contents/ui/config/ConfigUnits.qml
 msgid "Choose:"
@@ -750,11 +792,11 @@ msgstr "Angiv bynavn"
 
 #: ../contents/ui/lib/StationSearcher.qml
 msgid "Latitude:"
-msgstr "Breddegrad:"
+msgstr "Bredde:"
 
 #: ../contents/ui/lib/StationSearcher.qml
 msgid "Longitude:"
-msgstr "Længdegrad:"
+msgstr "Længde:"
 
 #: ../contents/ui/lib/StationSearcher.qml
 msgid "Weatherstation Name:"
@@ -795,6 +837,36 @@ msgstr "Fejl..."
 #: ../contents/ui/main.qml
 msgid "Refresh weather"
 msgstr "Opdater vejr"
+
+#~ msgid "Details icon size:"
+#~ msgstr "Detaljer ikon str.:"
+
+#~ msgid "Kp-prediction time format:"
+#~ msgstr "Kp-forudsigelse tidsformat:"
+
+#~ msgid "Status Color"
+#~ msgstr "Status farve"
+
+#~ msgid "Messages"
+#~ msgstr "Meddelelser"
+
+#~ msgid "AQI: %1"
+#~ msgstr "AQI: %1"
+
+#~ msgid "AQHI: %1"
+#~ msgstr "AQHI: %1"
+
+#~ msgid "Primary pollutant: "
+#~ msgstr "Primær forurening: "
+
+#~ msgid "Amount: %1 %2<br/>Description: %3<br/>Index: %4"
+#~ msgstr "Antal: %1 %2<br/>Beskrivelse: %3<br/>Indeks: %4"
+
+#~ msgid "Sunrise"
+#~ msgstr "Solopgang"
+
+#~ msgid "Sunset"
+#~ msgstr "Solnedgang"
 
 #~ msgctxt "Short for: 'Precipitation Accumulation'"
 #~ msgid "Precipitation Accum."

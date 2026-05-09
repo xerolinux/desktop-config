@@ -90,7 +90,7 @@ KCM.SimpleKCM {
                 Kirigami.FormData.label: i18n("Circle mode:")
             }
 
-            Components.DoubleSpinBox {
+            Components.DoubleSpinBoxCompat {
                 id: circleModeSize
                 Kirigami.FormData.label: i18n("Circle size:")
                 from: 0 * multiplier

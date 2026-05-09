@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: colorizer\n"
 "Report-Msgid-Bugs-To: https://github.com/luisbocanegra/plasma-panel-"
 "colorizer\n"
-"POT-Creation-Date: 2026-02-05 20:38+0000\n"
+"POT-Creation-Date: 2026-04-12 03:26+0000\n"
 "PO-Revision-Date: 2026-02-07 12:00+0100\n"
 "Last-Translator: RygorrMortis <rygorrmortis@github.com>\n"
 "Language-Team: Polish <kde-i18n-doc@kde.org>\n"
@@ -61,8 +61,12 @@ msgid "Global Overrides"
 msgstr "Globalne nadpisywanie"
 
 #: ../contents/config/config.qml
-msgid "Text/Icon Fixes"
-msgstr "Poprawki tekstu/ikon"
+msgid "Text/Icon Color Fixes"
+msgstr ""
+
+#: ../contents/config/config.qml
+msgid "Blacklist Widgets"
+msgstr ""
 
 #: ../contents/config/config.qml
 msgid "Hide Widgets"
@@ -112,6 +116,7 @@ msgstr "Ramka"
 #: ../contents/ui/components/FormShape.qml ../contents/ui/configGeneral.qml
 #: ../contents/ui/configPresetAutoload.qml
 #: ../contents/ui/configStockPanelSettings.qml
+#: ../contents/ui/configWidgetIslands.qml
 msgid "Enabled:"
 msgstr "Włączone:"
 
@@ -381,6 +386,12 @@ msgstr ""
 "rozmycia."
 
 #: ../contents/ui/components/FormWidgetSettings.qml
+msgid ""
+"⚠️ Disabling this breaks the panel clickable area and applet dialogs "
+"positioning when the panel is in floating mode! See <a href=\"%1\">#80</a>."
+msgstr ""
+
+#: ../contents/ui/components/FormWidgetSettings.qml
 msgid "The shadow from the Plasma theme"
 msgstr "Cień z motywu Plasma"
 
@@ -419,27 +430,25 @@ msgstr "Szeroki przycisk rozwijania:"
 
 #: ../contents/ui/components/FormWidgetSettings.qml
 msgid ""
-"Make the System Tray expand button be the same width as the other tray items"
+"Make the System Tray expand button use the same size as the other tray items"
 msgstr ""
-"Spraw, aby przycisk rozwijania tacki systemowej miał taką samą szerokość jak "
-"inne elementy tacki"
+
+#: ../contents/ui/components/FormWidgetSettings.qml
+msgid "Custom cell height:"
+msgstr ""
+
+#: ../contents/ui/components/FormWidgetSettings.qml
+msgid "Custom cell width:"
+msgstr ""
 
 #: ../contents/ui/components/FormWidgetSettings.qml
 msgid "Force floating applets"
 msgstr "Wymuś pływające aplety"
 
 #: ../contents/ui/components/FormWidgetSettings.qml
-msgid "Anchor to edges:"
-msgstr "Przyczep do krawędzi:"
-
-#: ../contents/ui/components/FormWidgetSettings.qml
-msgid "Resize content when panel enters/exits floating state"
-msgstr ""
-"Zmieniaj rozmiar zawartości, gdy panel wchodzi/wychodzi ze stanu pływającego"
-
-#: ../contents/ui/components/FormWidgetSettings.qml
-msgid "Panel de-float:"
-msgstr "Panel de-float:"
+#: ../contents/ui/configPresetAutoload.qml
+msgid "Floating panel:"
+msgstr "Pływający panel:"
 
 #: ../contents/ui/components/FormWidgetSettings.qml
 msgid ""
@@ -448,6 +457,12 @@ msgid ""
 msgstr ""
 "Usuń niestandardowe zaokrąglone rogi i ramki tła na krawędzi ekranu, gdy "
 "panel nie jest pływający"
+
+#: ../contents/ui/components/FormWidgetSettings.qml
+msgid ""
+"Resize panel length when panel enters/exits floating state (instead of just "
+"moving)"
+msgstr ""
 
 #: ../contents/ui/components/FormWidgetSettings.qml
 msgid "Customization"
@@ -500,33 +515,21 @@ msgstr ""
 "aby to działało zgodnie z zamierzeniem.</strong>"
 
 #: ../contents/ui/components/FormWidgetSettings.qml
+msgid ""
+"C++ plugin not found, this feature will not work. Install the plugin and "
+"reboot or restart plasmashell to be able to use it. See <a "
+"href=\"%1\">install instructions</a>."
+msgstr ""
+
+#: ../contents/ui/components/FormWidgetSettings.qml
 msgid "Clipping (Experimental)"
 msgstr "Przycinanie (eksperymentalne)"
 
 #: ../contents/ui/components/FormWidgetSettings.qml
 msgid ""
 "Clip the widget content to the custom background radius.<br>Clipping widgets "
-"against the panel is not supported yet but is planned for a later version, "
-"see <a href=\"https://github.com/luisbocanegra/plasma-panel-colorizer/"
-"issues/275\">#275</a>."
+"against the panel is not supported yet, see <a href=\"%1\">#275</a>."
 msgstr ""
-"Przycinaj zawartość widżetu do promienia niestandardowego tła."
-"<br>Przycinanie widżetów do panelu nie jest jeszcze obsługiwane, ale jest "
-"planowane w późniejszej wersji, zobacz <a href=\"https://github.com/"
-"luisbocanegra/plasma-panel-colorizer/issues/275\">#275</a>."
-
-#: ../contents/ui/components/FormWidgetSettings.qml
-msgid ""
-"C++ plugin not found, this feature will not work. Install the plugin and "
-"reboot or restart plasmashell to be able to use it."
-msgstr ""
-"Nie znaleziono wtyczki C++, ta funkcja nie będzie działać. Zainstaluj "
-"wtyczkę i uruchom ponownie komputer lub zrestartuj plasmashell, aby móc z "
-"niej korzystać."
-
-#: ../contents/ui/components/FormWidgetSettings.qml
-msgid "Plugin install instructions"
-msgstr "Instrukcje instalacji wtyczki"
 
 #: ../contents/ui/components/FormWidgetSettings.qml
 msgid "Shape"
@@ -778,12 +781,16 @@ msgstr "Oceń w Sklepie KDE"
 msgid "Translate %1 to your language"
 msgstr "Przetłumacz %1 na swój język"
 
+#: ../contents/ui/components/WidgetCardBlacklist.qml
 #: ../contents/ui/components/WidgetCardConfig.qml
 #: ../contents/ui/components/WidgetCardHide.qml
-#: ../contents/ui/components/WidgetCardIslands.qml
 #: ../contents/ui/components/WidgetCardTextIconFixes.qml
 msgid "System Tray"
 msgstr "Tacka systemowa"
+
+#: ../contents/ui/components/WidgetCardBlacklist.qml
+msgid "Blacklist"
+msgstr ""
 
 #: ../contents/ui/components/WidgetCardConfig.qml
 msgid "Add"
@@ -792,18 +799,6 @@ msgstr "Dodaj"
 #: ../contents/ui/components/WidgetCardHide.qml
 msgid "Hide"
 msgstr "Ukryj"
-
-#: ../contents/ui/components/WidgetCardIslands.qml
-msgid "Disable"
-msgstr "Wyłącz"
-
-#: ../contents/ui/components/WidgetCardIslands.qml
-msgid "Start"
-msgstr "Start"
-
-#: ../contents/ui/components/WidgetCardIslands.qml
-msgid "End"
-msgstr "Koniec"
 
 #: ../contents/ui/components/WidgetCardOverride.qml
 msgid "Edit"
@@ -861,6 +856,17 @@ msgstr ""
 #: ../contents/ui/configAppearance.qml
 msgid "Part of the panel on which the options below will be applied."
 msgstr ""
+
+#: ../contents/ui/configBlacklistWidgets.qml
+msgid ""
+"Blacklist widgets to keep their default appearance. A logout may be required "
+"for some widgets to fully restore their default appearance."
+msgstr ""
+
+#: ../contents/ui/configBlacklistWidgets.qml
+#: ../contents/ui/configTrayIconsReplacer.qml
+msgid "Remove all"
+msgstr "Usuń wszystkie"
 
 #: ../contents/ui/configGeneral.qml
 msgid "Hide widget:"
@@ -1131,10 +1137,6 @@ msgid "At least one window is visible:"
 msgstr "Przynajmniej jedno okno jest widoczne:"
 
 #: ../contents/ui/configPresetAutoload.qml
-msgid "Floating panel:"
-msgstr "Pływający panel:"
-
-#: ../contents/ui/configPresetAutoload.qml
 msgid "activity:"
 msgstr "aktywność:"
 
@@ -1388,18 +1390,10 @@ msgid ""
 "configured preset auto-loading or know how to switch presets using D-Bus (or "
 "have disabled it), you will have no way to make it visible again without "
 "manually removing the configuration or Panel Colorizer, use the command "
-"below in terminal/tty then log out or reboot, it will renove the "
+"below in terminal/tty then log out or reboot, it will remove the "
 "configuration from all Panel Colorizer instances so make sure to save the "
 "others first"
 msgstr ""
-"OSTRZEŻENIE: Używaj opcji Pokaż/Ukryj ostrożnie. Jeśli ukryjesz panel i nie "
-"skonfigurowałeś automatycznego ładowania presetów lub nie wiesz, jak "
-"przełączać presety za pomocą D-Bus (lub go wyłączyłeś), nie będziesz miał "
-"sposobu, aby go ponownie uczynić widocznym bez ręcznego usunięcia "
-"konfiguracji lub Koloryzatora Panelu. Użyj poniższego polecenia w terminalu/"
-"tty, a następnie wyloguj się lub zrestartuj. Usunie to konfigurację ze "
-"wszystkich instancji Koloryzatora Panelu, więc upewnij się, że najpierw "
-"zapiszesz inne."
 
 #: ../contents/ui/configStockPanelSettings.qml
 msgid ""
@@ -1448,10 +1442,6 @@ msgstr "Interwał odświeżania:"
 #: ../contents/ui/configTrayIconsReplacer.qml
 msgid "Add new"
 msgstr "Dodaj nowy"
-
-#: ../contents/ui/configTrayIconsReplacer.qml
-msgid "Remove all"
-msgstr "Usuń wszystkie"
 
 #: ../contents/ui/configTrayIconsReplacer.qml
 msgid "Sort"
@@ -1570,22 +1560,150 @@ msgid "Copy rule"
 msgstr "Kopiuj regułę"
 
 #: ../contents/ui/configWidgetIslands.qml
-msgid ""
-"Select start and end of widget islands, widgets between <b>Start</b> and "
-"<b>End</b> must be left <b>disabled</b>. Widget custom background or border "
-"is required for this option to have an effect."
+msgid "Create widget islands by placing separator widgets around them."
 msgstr ""
-"Wybierz początek i koniec wysp widżetów, widżety między <b>Start</b> a "
-"<b>End</b> muszą być pozostawione <b>wyłączone</b>. Niestandardowe tło lub "
-"ramka widżetu jest wymagana, aby ta opcja miała efekt."
 
 #: ../contents/ui/configWidgetIslands.qml
-msgid "Remove all islands"
-msgstr "Usuń wszystkie wyspy"
+msgid ""
+"<strong>How to use</strong><br>1. Add the widget that will act as islands "
+"separator to the panel(by default the Plasma's Panel Spacer widget will be "
+"used)<br>2. Select the separator widget below<br>3. Add as many separators "
+"as you need and move them to create islands."
+msgstr ""
+
+#: ../contents/ui/configWidgetIslands.qml
+msgid ""
+"<strong>Notes</strong><br>- Widget custom background or border is required "
+"for this option to have a visible effect.<br>- If the widgets in your panel "
+"have different thickness, add margins to the widgets custom background in "
+"the Appearance tab."
+msgstr ""
+
+#: ../contents/ui/configWidgetIslands.qml
+msgid ""
+"<strong>Need a separator widget?</strong><br>- <a href=\"%1\">Panel "
+"Colorizer Islands Separator</a> visible only in Edit Mode.<br>- <a "
+"href=\"%2\">Advanced Separator</a> always visible and configurable."
+msgstr ""
+
+#: ../contents/ui/configWidgetIslands.qml
+msgid "Separator widget:"
+msgstr ""
+
+#: ../contents/ui/configWidgetIslands.qml
+msgid ""
+"Select the widget that will act as separator for the islands.<br><br>Note "
+"that the separator widget itself does not need to be visible for it to work, "
+"so you can use an invisible spacer/separator for example."
+msgstr ""
+
+#: ../contents/ui/configWidgetIslands.qml
+msgid "Require two separators per island:"
+msgstr ""
+
+#: ../contents/ui/configWidgetIslands.qml
+msgid ""
+"Always require two separators for a group of widgets to become an island. By "
+"default, an arrangement of<br>%1 creates two islands.<br><br>Enabling this "
+"option makes it so that islands do not share separators, so for example an "
+"arrangement of<br>%2 is required to create two islands.<br><br>Enable this "
+"if your islands separator is not a panel spacer and you want to explicitly "
+"define the start and end of each island."
+msgstr ""
+
+#: ../contents/ui/configWidgetIslands.qml
+msgid "Blacklist separator widgets:"
+msgstr ""
+
+#: ../contents/ui/configWidgetIslands.qml
+msgid "Disable customization from separator widgets"
+msgstr ""
 
 #: ../contents/ui/main.qml
 msgid "Hide widget (visible in panel Edit Mode)"
 msgstr "Ukryj widżet (widoczny w trybie edycji panelu)"
+
+#~ msgid "Disable"
+#~ msgstr "Wyłącz"
+
+#~ msgid "Start"
+#~ msgstr "Start"
+
+#~ msgid "End"
+#~ msgstr "Koniec"
+
+#~ msgid ""
+#~ "Select start and end of widget islands, widgets between <b>Start</b> and "
+#~ "<b>End</b> must be left <b>disabled</b>. Widget custom background or "
+#~ "border is required for this option to have an effect."
+#~ msgstr ""
+#~ "Wybierz początek i koniec wysp widżetów, widżety między <b>Start</b> a "
+#~ "<b>End</b> muszą być pozostawione <b>wyłączone</b>. Niestandardowe tło "
+#~ "lub ramka widżetu jest wymagana, aby ta opcja miała efekt."
+
+#~ msgid "Remove all islands"
+#~ msgstr "Usuń wszystkie wyspy"
+
+#~ msgid ""
+#~ "Make the System Tray expand button be the same width as the other tray "
+#~ "items"
+#~ msgstr ""
+#~ "Spraw, aby przycisk rozwijania tacki systemowej miał taką samą szerokość "
+#~ "jak inne elementy tacki"
+
+#~ msgid "Text/Icon Fixes"
+#~ msgstr "Poprawki tekstu/ikon"
+
+#~ msgid "Anchor to edges:"
+#~ msgstr "Przyczep do krawędzi:"
+
+#~ msgid "Resize content when panel enters/exits floating state"
+#~ msgstr ""
+#~ "Zmieniaj rozmiar zawartości, gdy panel wchodzi/wychodzi ze stanu "
+#~ "pływającego"
+
+#~ msgid "Panel de-float:"
+#~ msgstr "Panel de-float:"
+
+#~ msgid ""
+#~ "Clip the widget content to the custom background radius.<br>Clipping "
+#~ "widgets against the panel is not supported yet but is planned for a later "
+#~ "version, see <a href=\"https://github.com/luisbocanegra/plasma-panel-"
+#~ "colorizer/issues/275\">#275</a>."
+#~ msgstr ""
+#~ "Przycinaj zawartość widżetu do promienia niestandardowego tła."
+#~ "<br>Przycinanie widżetów do panelu nie jest jeszcze obsługiwane, ale jest "
+#~ "planowane w późniejszej wersji, zobacz <a href=\"https://github.com/"
+#~ "luisbocanegra/plasma-panel-colorizer/issues/275\">#275</a>."
+
+#~ msgid ""
+#~ "C++ plugin not found, this feature will not work. Install the plugin and "
+#~ "reboot or restart plasmashell to be able to use it."
+#~ msgstr ""
+#~ "Nie znaleziono wtyczki C++, ta funkcja nie będzie działać. Zainstaluj "
+#~ "wtyczkę i uruchom ponownie komputer lub zrestartuj plasmashell, aby móc z "
+#~ "niej korzystać."
+
+#~ msgid "Plugin install instructions"
+#~ msgstr "Instrukcje instalacji wtyczki"
+
+#~ msgid ""
+#~ "WARNING: Use Show/Hide with caution, if you hide the panel and have not "
+#~ "configured preset auto-loading or know how to switch presets using D-Bus "
+#~ "(or have disabled it), you will have no way to make it visible again "
+#~ "without manually removing the configuration or Panel Colorizer, use the "
+#~ "command below in terminal/tty then log out or reboot, it will renove the "
+#~ "configuration from all Panel Colorizer instances so make sure to save the "
+#~ "others first"
+#~ msgstr ""
+#~ "OSTRZEŻENIE: Używaj opcji Pokaż/Ukryj ostrożnie. Jeśli ukryjesz panel i "
+#~ "nie skonfigurowałeś automatycznego ładowania presetów lub nie wiesz, jak "
+#~ "przełączać presety za pomocą D-Bus (lub go wyłączyłeś), nie będziesz miał "
+#~ "sposobu, aby go ponownie uczynić widocznym bez ręcznego usunięcia "
+#~ "konfiguracji lub Koloryzatora Panelu. Użyj poniższego polecenia w "
+#~ "terminalu/tty, a następnie wyloguj się lub zrestartuj. Usunie to "
+#~ "konfigurację ze wszystkich instancji Koloryzatora Panelu, więc upewnij "
+#~ "się, że najpierw zapiszesz inne."
 
 #~ msgid "Restore default (removes a..."
 #~ msgstr "Przywróć domyślne (usuwa wszystkie nadpisywania)"

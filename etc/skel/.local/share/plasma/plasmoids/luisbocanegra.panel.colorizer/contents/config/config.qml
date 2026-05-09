@@ -45,9 +45,15 @@ ConfigModel {
     }
 
     ConfigCategory {
-        name: i18n("Text/Icon Fixes")
+        name: i18n("Text/Icon Color Fixes")
         icon: "color-mode-invert-text-symbolic"
         source: "configTextIconFix.qml"
+    }
+
+    ConfigCategory {
+        name: i18n("Blacklist Widgets")
+        icon: "action-unavailable-symbolic"
+        source: "configBlacklistWidgets.qml"
     }
 
     ConfigCategory {
