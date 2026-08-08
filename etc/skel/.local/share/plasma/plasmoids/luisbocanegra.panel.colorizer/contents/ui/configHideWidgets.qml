@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 import QtCore
 import QtQuick
 import QtQuick.Controls
@@ -19,7 +20,7 @@ KCM.SimpleKCM {
     property var hiddenWidgetsConfig
     property bool loaded: false
     property string configDir: StandardPaths.writableLocation(StandardPaths.HomeLocation).toString().substring(7) + "/.config/panel-colorizer/"
-    property string importCmd: "cat '" + configDir + "forceForegroundColor.json'"
+    property string importCmd: "cat '" + configDir + "hiddenWidgets.json'"
     property string crateConfigDirCmd: "mkdir -p " + configDir
 
     function updateConfig() {
@@ -69,7 +70,6 @@ KCM.SimpleKCM {
             const title = widget.title;
             const icon = widget.icon;
             const inTray = widget.inTray;
-            const globalShortcut = widget.globalShortcut ?? "";
             if (inTray)
                 continue;
             widgetsModel.append({
@@ -78,8 +78,7 @@ KCM.SimpleKCM {
                 title,
                 icon,
                 inTray,
-                hide: false,
-                globalShortcut
+                hide: false
             });
         }
     }
@@ -169,10 +168,10 @@ KCM.SimpleKCM {
 
         Components.SettingImportExport {
             onExportConfirmed: {
-                runCommand.run(crateConfigDirCmd);
-                runCommand.run("echo '" + cfg_hiddenWidgets + "' > '" + configDir + "hiddenWidgets.json'");
+                runCommand.exec(crateConfigDirCmd);
+                runCommand.exec("echo '" + cfg_hiddenWidgets + "' > '" + configDir + "hiddenWidgets.json'");
             }
-            onImportConfirmed: runCommand.run(importCmd)
+            onImportConfirmed: runCommand.exec(importCmd)
         }
 
         ColumnLayout {
@@ -180,11 +179,10 @@ KCM.SimpleKCM {
             Layout.alignment: Qt.AlignHCenter
             Repeater {
                 model: widgetsModel
-
                 delegate: Components.WidgetCardHide {
-                    widget: model
+                    required property int index
                     onUpdateWidget: hide => {
-                        if (!loaded)
+                        if (!root.loaded)
                             return;
 
                         widgetsModel.set(index, {

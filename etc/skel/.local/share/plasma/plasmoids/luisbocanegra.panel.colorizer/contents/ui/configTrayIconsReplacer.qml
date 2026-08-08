@@ -6,9 +6,8 @@ import QtQuick.Layouts
 import org.kde.iconthemes as KIconThemes
 import org.kde.kcmutils as KCM
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.plasmoid
 import "components" as Components
-import "code/statusNotifierItemIconHashes.js" as SNIIconHashes
+import "code/statusNotifierItemIconRules.js" as SNIIconRules
 
 KCM.ScrollViewKCM {
     id: root
@@ -33,24 +32,29 @@ KCM.ScrollViewKCM {
         text: i18n("Add new")
         onTriggered: trayIconReplacementsModel.addItem()
     }
-    readonly property Kirigami.Action restoreDefaultAction: Kirigami.Action {
+    readonly property Kirigami.Action clearAction: Kirigami.Action {
         icon.name: "edit-delete-symbolic"
         text: i18n("Remove all")
         onTriggered: trayIconReplacementsModel.clear()
     }
+    readonly property Kirigami.Action sortAction: Kirigami.Action {
+        icon.name: "view-sort-ascending-name"
+        text: i18n("Sort")
+        onTriggered: trayIconReplacementsModel.sortRules()
+    }
 
     function updateConfig() {
-        let actions = new Array();
+        let rules = new Array();
         for (let i = 0; i < trayIconReplacementsModel.model.count; i++) {
             let item = trayIconReplacementsModel.model.get(i);
-            actions.push({
+            rules.push({
                 "description": item.description,
-                "hash": item.hash,
+                "match": item.match,
                 "icon": item.icon,
                 "enabled": item.enabled
             });
         }
-        cfg_systemTrayIconUserReplacements = JSON.stringify(actions);
+        cfg_systemTrayIconUserReplacements = JSON.stringify(rules);
     }
 
     TrayIconReplacementsModel {
@@ -66,7 +70,7 @@ KCM.ScrollViewKCM {
 
     Component.onCompleted: {
         trayIconReplacementsModel.initModel(cfg_systemTrayIconUserReplacements);
-        trayIconBuiltinReplacementsModel.initModel(JSON.stringify(SNIIconHashes.hashes));
+        trayIconBuiltinReplacementsModel.initModel(JSON.stringify(SNIIconRules.rules));
         try {
             panelColorizer = Qt.createQmlObject("import org.kde.plasma.panelcolorizer 1.0; PanelColorizer { id: panelColorizer }", root);
         } catch (e) {
@@ -86,7 +90,6 @@ KCM.ScrollViewKCM {
             if (cmd.startsWith("cat")) {
                 const content = stdout.trim();
                 try {
-                    console.log(content);
                     trayIconReplacementsModel.initModel(content);
                 } catch (e) {
                     console.error(e);
@@ -107,7 +110,7 @@ KCM.ScrollViewKCM {
         }
         Kirigami.InlineMessage {
             Layout.fillWidth: true
-            text: i18n("Replace System Tray icons with icons from the current icon theme or a local file. The built-in rules icons are part of <a href=\"https://github.com/PapirusDevelopmentTeam/papirus-icon-theme\">Papirus icon theme</a>.")
+            text: i18n("Replace System Tray icons with icons from the current icon theme or a local file. The built-in rules icons are part of <a href=\"%1\">Papirus icon theme</a>.", "https://github.com/PapirusDevelopmentTeam/papirus-icon-theme")
             visible: true
             type: Kirigami.MessageType.Information
             spacing: 0
@@ -115,7 +118,7 @@ KCM.ScrollViewKCM {
         }
         Kirigami.InlineMessage {
             Layout.fillWidth: true
-            text: i18n("C++ plugin not found, this feature will not work. Install the plugin and reboot or restart plasmashell to be able to use it <a href=\"https://github.com/luisbocanegra/plasma-panel-colorizer?tab=readme-ov-file#manually\">Install instructions</a>.")
+            text: i18n("C++ plugin not found, this feature will not work. Install the plugin and reboot or restart plasmashell to be able to use it <a href=\"%1\">Install instructions</a>.", "https://github.com/luisbocanegra/plasma-panel-colorizer?tab=readme-ov-file#manually")
             visible: root.panelColorizer === null
             type: Kirigami.MessageType.Error
             spacing: 0
@@ -123,7 +126,7 @@ KCM.ScrollViewKCM {
         }
         Kirigami.InlineMessage {
             Layout.fillWidth: true
-            text: i18n("The installed version of the C++ plugin doesn't support this feature, update the plugin and reboot or restart plasmashell to be able to use it <a href=\"https://github.com/luisbocanegra/plasma-panel-colorizer?tab=readme-ov-file#manually\">Install instructions</a>.")
+            text: i18n("The installed version of the C++ plugin doesn't support this feature, update the plugin and reboot or restart plasmashell to be able to use it <a href=\"%1\">Install instructions</a>.", "https://github.com/luisbocanegra/plasma-panel-colorizer?tab=readme-ov-file#manually")
             visible: root.panelColorizer && (typeof root.panelColorizer?.getIconHash !== "function")
             type: Kirigami.MessageType.Error
             spacing: 0
@@ -146,6 +149,7 @@ KCM.ScrollViewKCM {
                     toolTipText: i18n("Icon hashes will be printed to the system log")
                 }
             }
+
             RowLayout {
                 enabled: root.cfg_systemTrayIconsReplacementEnabled
                 Kirigami.FormData.label: i18n("Enable built-in rules:")
@@ -168,7 +172,7 @@ KCM.ScrollViewKCM {
             Layout.margins: Kirigami.Units.mediumSpacing
         }
         Label {
-            text: "1. Enable <b>Log icon changes</b> above<br>2. Run <b>journalctl -f</b> from terminal<br>3. Hover the System tray entry or trigger an icon change<br>4. Copy the icon <b>SHA1</b> (long string of numbers and letters)<br>5. Add a new rule with the <b>SHA1</b> and your icon name or icon file"
+            text: i18n("1. Enable <b>Log icon changes</b> above<br>2. Run <b>journalctl -f</b> from terminal<br>3. Hover the System tray entry or trigger an icon change<br>4. Copy any of the properties: icon SHA1/name, title or name <br>5. Add a new rule with the SHA1/icon name/title/name you choose and specify the custom icon name or file")
             wrapMode: Label.WordWrap
             font.features: {
                 "tnum": 1
@@ -178,31 +182,39 @@ KCM.ScrollViewKCM {
             Layout.fillWidth: true
         }
         Label {
-            text: "<b>Note</b>: There are some rules without icon as there was no matching one in Papirus, you can override those with your own icons by adding the SHA1 to <b>User Replacements</b>"
+            text: i18n("<b>Note</b>: There are some rules without icon as there was no matching one in Papirus, you can override those with your own icons by copying the rule to <b>User Replacements</b>")
             wrapMode: Label.WordWrap
-            font.features: {
-                "tnum": 1
-            }
             visible: showHowToLabel.checked
             Layout.margins: Kirigami.Units.mediumSpacing
             Layout.fillWidth: true
         }
         Label {
-            text: "<b>Note</b>: Some applications like Signal are missing accumulated notification icons, contribution of missing icons via GitHub pull request or issue is very welcome, please do so by providing the the description + sha1 + icon-name from Papirus (panel/status icons only if no matching icon exists, otherwise it can be omitted)</b>"
+            text: i18n("<b>Note</b>: Some applications like Signal are missing accumulated notification icons, contribution of missing icons via GitHub pull request or issue is very welcome, please do so by providing the the description + SHA1/title/name + icon-name from Papirus (panel/status icons only if no matching icon exists, otherwise it can be omitted)")
             wrapMode: Label.WordWrap
-            font.features: {
-                "tnum": 1
-            }
+            visible: showHowToLabel.checked
+            Layout.margins: Kirigami.Units.mediumSpacing
+            Layout.fillWidth: true
+        }
+        Label {
+            text: i18n("<b>Note</b>: Matching properties (especially the SHA1) may change when applications get updated, rules will need to be updated when that happens.")
+            wrapMode: Label.WordWrap
+            visible: showHowToLabel.checked
+            Layout.margins: Kirigami.Units.mediumSpacing
+            Layout.fillWidth: true
+        }
+        Label {
+            text: i18n("<b>Note</b>: Plasma widgets in the system tray are not supported by this feature as widgets provide their own visual content and logic.")
+            wrapMode: Label.WordWrap
             visible: showHowToLabel.checked
             Layout.margins: Kirigami.Units.mediumSpacing
             Layout.fillWidth: true
         }
         Components.SettingImportExport {
             onExportConfirmed: {
-                runCommand.run(root.crateConfigDirCmd);
-                runCommand.run("echo '" + root.cfg_systemTrayIconUserReplacements + "' > '" + root.configDir + "trayIconReplacements.json'");
+                runCommand.exec(root.crateConfigDirCmd);
+                runCommand.exec("echo '" + root.cfg_systemTrayIconUserReplacements + "' > '" + root.configDir + "trayIconReplacements.json'");
             }
-            onImportConfirmed: runCommand.run(root.importCmd)
+            onImportConfirmed: runCommand.exec(root.importCmd)
             Layout.margins: Kirigami.Units.mediumSpacing
             enabled: root.cfg_isEnabled && root.cfg_systemTrayIconsReplacementEnabled
         }
@@ -219,13 +231,13 @@ KCM.ScrollViewKCM {
                 if (showBuiltInRules.checked) {
                     return [];
                 }
-                return [root.restoreDefaultAction, root.addContextMenuAction];
+                return [root.sortAction, root.clearAction, root.addContextMenuAction];
             }
         }
         delegate: Item {
             id: itemDelegate
             readonly property var view: ListView.view
-            required property string hash
+            required property string match
             required property string icon
             required property string description
             required property bool enabled
@@ -238,9 +250,9 @@ KCM.ScrollViewKCM {
                 // There's no need for a list item to ever be selected
                 down: false
                 highlighted: false
+                background: Item {}
                 contentItem: RowLayout {
                     spacing: Kirigami.Units.smallSpacing
-                    Layout.fillWidth: true
 
                     Kirigami.ListItemDragHandle {
                         visible: itemDelegate.view.count > 1
@@ -281,24 +293,25 @@ KCM.ScrollViewKCM {
                                 return;
                             trayIconReplacementsModel.updateItem(itemDelegate.index, "description", text);
                         }
-                        Layout.fillWidth: true
+                        Layout.preferredWidth: 300
                         enabled: itemDelegate.enabled
                         readOnly: showBuiltInRules.checked
                     }
 
                     TextField {
+                        id: matchTextField
                         Layout.fillWidth: true
-                        text: itemDelegate.hash
+                        text: itemDelegate.match
                         font.family: "monospace"
                         color: Kirigami.Theme.textColor
-                        placeholderText: i18n("SHA1")
+                        placeholderText: i18n("SHA1, string or regex to match")
                         ToolTip.delay: 1000
                         ToolTip.visible: hovered
-                        ToolTip.text: i18n("Original icon SHA1")
+                        ToolTip.text: i18n("Icon SHA1, title or name of the target tray item")
                         onTextChanged: {
                             if (root.isLoading || showBuiltInRules.checked)
                                 return;
-                            trayIconReplacementsModel.updateItem(itemDelegate.index, "hash", text);
+                            trayIconReplacementsModel.updateItem(itemDelegate.index, "match", text);
                         }
                         enabled: itemDelegate.enabled
                         readOnly: showBuiltInRules.checked
@@ -320,14 +333,23 @@ KCM.ScrollViewKCM {
                         readOnly: showBuiltInRules.checked
                     }
 
-                    Button {
+                    ToolButton {
                         id: iconButton
                         hoverEnabled: true
                         ToolTip.delay: Kirigami.Units.toolTipDelay
-                        ToolTip.text: i18nc("@info:tooltip", "Icon name is \"%1\"", itemDelegate.icon)
+                        ToolTip.text: i18n("Edit icon")
                         ToolTip.visible: iconButton.hovered && itemDelegate.icon.length > 0
-                        icon.name: itemDelegate.icon || "unknown"
                         enabled: itemDelegate.enabled
+                        contentItem: Item {
+                            implicitHeight: Kirigami.Units.gridUnit * 2
+                            Kirigami.Icon {
+                                source: itemDelegate.icon
+                                fallback: "unknown"
+                                anchors.centerIn: parent
+                                implicitHeight: Kirigami.Units.iconSizes.smallMedium
+                                implicitWidth: Kirigami.Units.iconSizes.smallMedium
+                            }
+                        }
                         KIconThemes.IconDialog {
                             id: iconDialog
                             onIconNameChanged: {
@@ -372,7 +394,7 @@ KCM.ScrollViewKCM {
                         onClicked: {
                             let rule = {
                                 "description": itemDelegate.description,
-                                "hash": itemDelegate.hash,
+                                "match": itemDelegate.match,
                                 "icon": itemDelegate.icon,
                                 "enabled": itemDelegate.enabled
                             };
@@ -384,7 +406,7 @@ KCM.ScrollViewKCM {
                         }
                         hoverEnabled: true
                         ToolTip.delay: Kirigami.Units.toolTipDelay
-                        ToolTip.text: showBuiltInRules.checked ? i18n("Copy to User Rules") : i18n("Copy rule")
+                        ToolTip.text: showBuiltInRules.checked ? i18n("Copy to User Rules") : i18n("Duplicate rule")
                         ToolTip.visible: copyRuleButton.hovered
                     }
 

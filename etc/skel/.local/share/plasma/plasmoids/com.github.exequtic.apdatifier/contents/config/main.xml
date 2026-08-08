@@ -1,8 +1,3 @@
-<!--
-    SPDX-FileCopyrightText: 2024 Evgeny Kazantsev <exequtic@gmail.com>
-    SPDX-License-Identifier: MIT
--->
-
 <kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
@@ -22,11 +17,9 @@
         <entry name="flatpak" type="bool"><default>false</default></entry>
         <entry name="widgets" type="bool"><default>false</default></entry>
         <entry name="fwupd" type="bool"><default>false</default></entry>
-        <entry name="newsArch" type="bool"><default>false</default></entry>
-        <entry name="newsKDE" type="bool"><default>false</default></entry>
-        <entry name="newsTWIK" type="bool"><default>false</default></entry>
-        <entry name="newsTWIKA" type="bool"><default>false</default></entry>
-        <entry name="newsKeep" type="int"><default>3</default></entry>
+        <entry name="feedsEnabled" type="bool"><default>false</default></entry>
+        <entry name="feedsFetchCount" type="int"><default>3</default></entry>
+        <entry name="feeds" type="string"><default>https://archlinux.org/feeds/news/</default></entry>
         <entry name="middleAction" type="string"><default>upgradeSystem</default></entry>
         <entry name="rightAction" type="string"><default></default></entry>
         <entry name="scrollUpAction" type="string"><default>switchScheduler</default></entry>
@@ -39,6 +32,8 @@
         <entry name="notifyErrors" type="bool"><default>true</default></entry>
         <entry name="notifySound" type="bool"><default>true</default></entry>
         <entry name="notifyPersistent" type="bool"><default>false</default></entry>
+        <entry name="checkConn" type="bool"><default>false</default></entry>
+        <entry name="respectMeteredConn" type="bool"><default>false</default></entry>
     </group>
     <group name="Upgrade">
         <entry name="wrapper" type="string"><default></default></entry>
@@ -62,54 +57,60 @@
         <entry name="idleInhibit" type="bool"><default>false</default></entry>
         <entry name="tmuxSession" type="bool"><default>false</default></entry>
         <entry name="termFont" type="bool"><default>false</default></entry>
+        <entry name="mngHideFlatpak" type="bool"><default>false</default></entry>
+        <entry name="mngHideHeaders" type="bool"><default>false</default></entry>
+        <entry name="mngHideHelp" type="bool"><default>false</default></entry>
+        <entry name="mngHideNums" type="bool"><default>false</default></entry>
+        <entry name="fzfOptions" type="string"><default></default></entry>
     </group>
     <group name="Appearance">
-        <entry name="relevantIcon" type="int"><default>0</default></entry>
+        <entry name="hideIconPolicy" type="int"><default>0</default></entry>
         <entry name="selectedIcon" type="string"><default>apdatifier-plasmoid</default></entry>
-        <entry name="badgePaused" type="bool"><default>true</default></entry>
-        <entry name="badgeUpdated" type="bool"><default>true</default></entry>
-        <entry name="counterEnabled" type="bool"><default>true</default></entry>
-        <entry name="counterOnLeft" type="bool"><default>false</default></entry>
-        <entry name="counterColor" type="string"><default></default></entry>
-        <entry name="counterSize" type="int"><default>0</default></entry>
-        <entry name="counterRadius" type="int"><default>3</default></entry>
-        <entry name="counterOpacity" type="int"><default>8</default></entry>
-        <entry name="counterShadow" type="bool"><default>true</default></entry>
-        <entry name="counterFontFamily" type="string"><default></default></entry>
-        <entry name="counterFontSize" type="int"><default>6</default></entry>
-        <entry name="counterFontBold" type="bool"><default>true</default></entry>
-        <entry name="counterSpacing" type="int"><default>0</default></entry>
-        <entry name="counterMargins" type="int"><default>0</default></entry>
+        <entry name="busyIndicator" type="string"><default>spinner</default></entry>
+        <entry name="counterMode" type="string"><default>side</default></entry>
+        <entry name="counterBadgePosition" type="string"><default>topRight</default></entry>
+        <entry name="counterSidePosition" type="string"><default>left</default></entry>
+        <entry name="counterGapsInner" type="int"><default>0</default></entry>
+        <entry name="counterGapsOuter" type="int"><default>0</default></entry>
         <entry name="counterOffsetX" type="int"><default>0</default></entry>
         <entry name="counterOffsetY" type="int"><default>0</default></entry>
-        <entry name="counterCenter" type="bool"><default>false</default></entry>
-        <entry name="counterTop" type="bool"><default>true</default></entry>
-        <entry name="counterBottom" type="bool"><default>false</default></entry>
-        <entry name="counterRight" type="bool"><default>true</default></entry>
-        <entry name="counterLeft" type="bool"><default>false</default></entry>
+        <entry name="counterColor" type="string"><default></default></entry>
+        <entry name="counterRadius" type="int"><default>3</default></entry>
+        <entry name="counterOpacity" type="int"><default>8</default></entry>
+        <entry name="counterFontFamily" type="string"><default></default></entry>
+        <entry name="counterFontSize" type="int"><default>4</default></entry>
+        <entry name="counterFontBold" type="bool"><default>true</default></entry>
+        <entry name="pauseBadgePosition" type="string"><default>topLeft</default></entry>
+        <entry name="updatedBadgePosition" type="string"><default>topRight</default></entry>
+        <entry name="badgeOffsetX" type="int"><default>0</default></entry>
+        <entry name="badgeOffsetY" type="int"><default>0</default></entry>
         <entry name="ownIconsUI" type="bool"><default>true</default></entry>
+        <entry name="autoHideScrollBar" type="bool"><default>true</default></entry>
         <entry name="defaultTab" type="int"><default>0</default></entry>
         <entry name="switchDefaultTab" type="bool"><default>false</default></entry>
-        <entry name="spacing" type="int"><default>6</default></entry>
         <entry name="sorting" type="bool"><default>true</default></entry>
         <entry name="showStatusText" type="bool"><default>true</default></entry>
         <entry name="showToolBar" type="bool"><default>true</default></entry>
         <entry name="searchButton" type="bool"><default>true</default></entry>
         <entry name="intervalButton" type="bool"><default>true</default></entry>
         <entry name="sortButton" type="bool"><default>true</default></entry>
+        <entry name="viewButton" type="bool"><default>true</default></entry>
         <entry name="managementButton" type="bool"><default>true</default></entry>
         <entry name="upgradeButton" type="bool"><default>true</default></entry>
         <entry name="checkButton" type="bool"><default>true</default></entry>
         <entry name="pinButton" type="bool"><default>true</default></entry>
         <entry name="settingsButton" type="bool"><default>true</default></entry>
+        <entry name="compactInfo" type="string"><default>repository</default></entry>
+        <entry name="extendedShowRepository" type="bool"><default>true</default></entry>
+        <entry name="extendedShowInstallReason" type="bool"><default>true</default></entry>
+        <entry name="highlightVersionDiff" type="bool"><default>false</default></entry>
+        <entry name="colorizeInstallReason" type="bool"><default>false</default></entry>
         <entry name="tabBarVisible" type="bool"><default>true</default></entry>
         <entry name="tabBarTexts" type="bool"><default>true</default></entry>
     </group>
     <group name="Miscellaneous">
         <entry name="version" type="string"><default>v0</default></entry>
-        <entry name="timestamp" type="string"><default></default></entry>
         <entry name="configMsg" type="bool"><default>true</default></entry>
-        <entry name="rulesMsg" type="bool"><default>true</default></entry>
         <entry name="dbPath" type="string"><default>${TMPDIR:-/tmp}/checkup-db-$(id -u)</default></entry>
     </group>
 </kcfg>

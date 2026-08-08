@@ -1,5 +1,5 @@
 /*
- * Copyright 2025  Kevin Donnelly
+ * Copyright 2026  Kevin Donnelly
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -19,6 +19,7 @@ import QtQuick
 import QtQuick.Layouts
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
+import org.kde.kirigami as Kirigami
 import org.kde.plasma.components as PlasmaComponents
 
 RowLayout {
@@ -26,7 +27,22 @@ RowLayout {
     TextMetrics {
         id: aqIndexTxt
 
-        text: i18n("Status Color")
+        text: weatherData["aq"]["aqDesc"]
+    }
+
+    TextMetrics {
+        id: solStatusTxt
+
+        text: {
+            var val = Math.round(weatherData["kp-health"]);
+            if (val < 4) {
+                return i18n("Comfortable");
+            } else if (val < 7) {
+                return i18n("Moderate");
+            } else {
+                return i18n("Unfavorable");
+            }
+        }
     }
 
     GridLayout {
@@ -37,6 +53,8 @@ RowLayout {
 
         Layout.preferredWidth: 1
         Layout.fillWidth: true
+
+        uniformCellWidths: true
 
         PlasmaComponents.Label {
             id: aqLabel
@@ -52,67 +70,17 @@ RowLayout {
             }
 
             text: i18n("Air quality")
+
+            wrapMode: Text.WordWrap
         }
-        PlasmaComponents.Label {
-            id: aqDesc
 
-            Layout.columnSpan: 2
-            Layout.fillWidth: true
-
-            horizontalAlignment: Text.AlignHCenter
-
-            font.underline: true
-
-            text: i18n("Messages")
-
-            PlasmaCore.ToolTipArea {
-                anchors.fill: parent
-
-                interactive: true
-
-                mainItem: ColumnLayout {
-                    PlasmaComponents.Label {
-                        text: weatherData["aq"]["messages"]["general"]["title"]
-                        font.bold: true
-                    }
-                    PlasmaComponents.Label {
-                        text: weatherData["aq"]["messages"]["general"]["phrase"]
-                        wrapMode: Text.WordWrap
-                    }
-                    PlasmaComponents.Label {
-                        text: weatherData["aq"]["messages"]["sensitive"]["title"]
-                        font.bold: true
-                    }
-                    PlasmaComponents.Label {
-                        text: weatherData["aq"]["messages"]["sensitive"]["phrase"]
-                        wrapMode: Text.WordWrap
-                    }
-                }
-            }
-        }
-        PlasmaComponents.Label {
-            id: aqIndex
-
-            Layout.fillWidth: true
-
-            horizontalAlignment: Text.AlignHCenter
-
-            text: i18n("AQI: %1", weatherData["aq"]["aqi"])
-        }
-        PlasmaComponents.Label {
-            id: aqhi
-            Layout.fillWidth: true
-
-            horizontalAlignment: Text.AlignHCenter
-
-            text: i18n("AQHI: %1", weatherData["aq"]["aqhi"])
-        }
         Rectangle {
             id: aqIndexColor
 
             Layout.preferredWidth: aqIndexTxt.width + 5
             Layout.preferredHeight: aqIndexTxt.height + 5
             Layout.alignment: Qt.AlignCenter
+            Layout.columnSpan: 2
 
             color: "#" + weatherData["aq"]["aqColor"]
 
@@ -129,28 +97,200 @@ RowLayout {
             }
         }
 
-        Row {
-            Layout.alignment: Qt.AlignCenter
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 0
 
             PlasmaComponents.Label {
-                horizontalAlignment: Text.AlignCenter
-                text: i18n("Primary pollutant: ")
+                text: "\uF06B"
+                font.family: "weather-icons"
+                font.pixelSize: Kirigami.Units.iconSizes.medium
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
             }
 
             PlasmaComponents.Label {
-                horizontalAlignment: Text.AlignCenter
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                font.pointSize: plasmoid.configuration.propPointSize
 
-                font.underline: true
+                text: i18nc("Air Quality Index","AQI")
+            }
+
+            PlasmaComponents.Label {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                font.pointSize: plasmoid.configuration.propPointSize
+                font.bold: true
+
+                text: weatherData["aq"]["aqi"]
+            }
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 0
+
+            PlasmaComponents.Label {
+                text: "\uF06E"
+                font.family: "weather-icons"
+                font.pixelSize: Kirigami.Units.iconSizes.medium
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+            }
+
+            PlasmaComponents.Label {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                font.pointSize: plasmoid.configuration.propPointSize
+
+                text: i18nc("Air Quality Health Index", "AQHI")
+            }
+
+            PlasmaComponents.Label {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                font.pointSize: plasmoid.configuration.propPointSize
+                font.bold: true
+
+                text: weatherData["aq"]["aqhi"]
+            }
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 0
+
+            PlasmaComponents.Label {
+                text: "\uF06F"
+                font.family: "weather-icons"
+                font.pixelSize: Kirigami.Units.iconSizes.medium
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+            }
+
+            PlasmaComponents.Label {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                font.pointSize: plasmoid.configuration.propPointSize
 
                 text: weatherData["aq"]["aqPrimary"]
+            }
+
+            PlasmaComponents.Label {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                font.pointSize: plasmoid.configuration.propPointSize
+                font.bold: true
+
+                text: weatherData["aq"]["primaryDetails"]["amount"] + " " + weatherData["aq"]["primaryDetails"]["unit"]
+            }
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 0
+
+            Kirigami.Icon {
+                source: "documentinfo-symbolic"
+                width: Kirigami.Units.iconSizes.medium
+                height: Kirigami.Units.iconSizes.medium
+                Layout.alignment: Qt.AlignHCenter
+            }
+
+            PlasmaComponents.Label {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                font.pointSize: plasmoid.configuration.propPointSize
+
+                text: i18n("Alerts")
+            }
+
+            PlasmaComponents.Label {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                font.pointSize: plasmoid.configuration.propPointSize
+                font.bold: true
+                font.underline: true
+
+                text: i18n("Info")
 
                 PlasmaCore.ToolTipArea {
                     anchors.fill: parent
 
                     interactive: true
 
-                    mainText: weatherData["aq"]["primaryDetails"]["phrase"]
-                    subText: i18n("Amount: %1 %2<br/>Description: %3<br/>Index: %4", weatherData["aq"]["primaryDetails"]["amount"], weatherData["aq"]["primaryDetails"]["unit"], weatherData["aq"]["primaryDetails"]["desc"], weatherData["aq"]["primaryDetails"]["index"])
+                    mainItem: Item {
+                        implicitWidth: Kirigami.Units.gridUnit * 15
+                        implicitHeight: aqInfoLayout.implicitHeight + Kirigami.Units.gridUnit * 2
+                        
+                        ColumnLayout {
+                            id: aqInfoLayout
+
+                            anchors.fill: parent
+
+                            PlasmaComponents.Label {
+                                Layout.fillWidth: true
+                                text: weatherData["aq"]["messages"]["general"]["title"]
+                                font.bold: true
+                            }
+
+                            PlasmaComponents.Label {
+                                Layout.fillWidth: true
+                                text: weatherData["aq"]["messages"]["general"]["phrase"]
+                                wrapMode: Text.WordWrap
+                            }
+
+                            PlasmaComponents.Label {
+                                Layout.fillWidth: true
+                                text: weatherData["aq"]["messages"]["sensitive"]["title"]
+                                font.bold: true
+                            }
+
+                            PlasmaComponents.Label {
+                                Layout.fillWidth: true
+                                text: weatherData["aq"]["messages"]["sensitive"]["phrase"]
+                                wrapMode: Text.WordWrap
+                            }
+
+                            PlasmaComponents.Label {
+                                Layout.fillWidth: true
+                                text: i18nc("Air Quality Index","AQI")
+                                font.bold: true
+                            }
+
+                            PlasmaComponents.Label {
+                                Layout.fillWidth: true
+                                text: i18n("The AQI is a measure of air quality that takes into account the levels of various pollutants in the air. It ranges from 0 to 500, with higher values indicating worse air quality. An AQI of 0-50 is considered good, 51-100 is moderate, 101-150 is unhealthy for sensitive groups, 151-200 is unhealthy, 201-300 is very unhealthy, and 301-500 is hazardous.")
+                                wrapMode: Text.WordWrap
+                            }
+
+                            PlasmaComponents.Label {
+                                Layout.fillWidth: true
+                                text: i18nc("Air Quality Health Index", "AQHI")
+                                font.bold: true
+                            }
+
+                            PlasmaComponents.Label {
+                                Layout.fillWidth: true
+                                text: i18n("The AQHI is a measure of how the air quality may affect human health. It ranges from 1 to 10+, with higher values indicating more unfavorable conditions for health. An AQHI of 1-3 is considered low risk, 4-6 is moderate risk, 7-10 is high risk, and 10+ is very high risk.")
+                                wrapMode: Text.WordWrap
+                            }
+
+                            PlasmaComponents.Label {
+                                Layout.fillWidth: true
+                                text: i18nc("Particulate Matter", "PM2.5")
+                                font.bold: true
+                            }
+
+                            PlasmaComponents.Label {
+                                Layout.fillWidth: true
+                                text: i18n("Particulate matter (PM2.5) is a measure of the amount of solid particles and liquid droplets suspended in the air. It can have serious health effects, especially on the respiratory and cardiovascular systems.")
+                                wrapMode: Text.WordWrap
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -161,6 +301,8 @@ RowLayout {
 
         columns: 2
         rows: 4
+
+        uniformCellWidths: true
 
         Layout.preferredWidth: 1
         Layout.fillWidth: true
@@ -180,51 +322,199 @@ RowLayout {
             }
 
             text: i18n("Solar info")
-        }
-        PlasmaComponents.Label {
-            id: solRad
 
+            wrapMode: Text.WordWrap
+        }
+
+        Rectangle {
+            Layout.preferredWidth: solStatusTxt.width + 5
+            Layout.preferredHeight: solStatusTxt.height + 5
+            Layout.alignment: Qt.AlignCenter
             Layout.columnSpan: 2
-            Layout.fillWidth: true
 
-            horizontalAlignment: Text.AlignHCenter
+            color: weatherData["kp-color"] || "#FFFFFF"
 
-            textFormat: Text.RichText
+            radius: 5
 
-            text: weatherData["solarRad"] + " W/m<sup>2</sup>"
+            PlasmaComponents.Label {
+                anchors.centerIn: parent
+
+                color: "#000000"
+
+                text: {
+                    var val = Math.round(weatherData["kp-health"]);
+                    if (val < 4) {
+                        return i18n("Comfortable");
+                    } else if (val < 7) {
+                        return i18n("Moderate");
+                    } else {
+                        return i18n("Unfavorable");
+                    }
+                }
+            }
         }
-        PlasmaComponents.Label {
-            id: sunriseLabel
 
+        ColumnLayout {
             Layout.fillWidth: true
+            spacing: 0
 
-            horizontalAlignment: Text.AlignHCenter
+            PlasmaComponents.Label {
+                text: "\uF06D"
+                font.family: "weather-icons"
+                font.pixelSize: Kirigami.Units.iconSizes.medium
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+            }
 
-            text: i18n("Sunrise")
+            PlasmaComponents.Label {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                font.pointSize: plasmoid.configuration.propPointSize
+
+                text: i18nc("See: https://www.swpc.noaa.gov/products/planetary-k-index","Kp-index")
+            }
+
+            PlasmaComponents.Label {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                font.pointSize: plasmoid.configuration.propPointSize
+                font.bold: true
+
+                text: weatherData["kp-index"] || "N/A"
+            }
         }
-        PlasmaComponents.Label {
-            id: sunsetLabel
+
+        ColumnLayout {
             Layout.fillWidth: true
+            spacing: 0
 
-            horizontalAlignment: Text.AlignHCenter
+            PlasmaComponents.Label {
+                text: "\uF072"
+                font.family: "weather-icons"
+                font.pixelSize: Kirigami.Units.iconSizes.medium
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+            }
 
-            text: i18n("Sunset")
+            PlasmaComponents.Label {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                font.pointSize: plasmoid.configuration.propPointSize
+
+                text: i18n("Power")
+            }
+
+            PlasmaComponents.Label {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                font.pointSize: plasmoid.configuration.propPointSize
+                font.bold: true
+
+                text: weatherData["solarRad"] + " W/m²"
+            }
         }
-        PlasmaComponents.Label {
-            id: sunrise
+
+        ColumnLayout {
             Layout.fillWidth: true
+            spacing: 0
 
-            horizontalAlignment: Text.AlignHCenter
+            PlasmaComponents.Label {
+                text: "\uF00E"
+                font.family: "weather-icons"
+                font.pixelSize: Kirigami.Units.iconSizes.medium
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+            }
 
-            text: new Date(weatherData["sunrise"]).toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
+            PlasmaComponents.Label {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                font.pointSize: plasmoid.configuration.propPointSize
+
+                text: i18n("Health index")
+            }
+
+            PlasmaComponents.Label {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                font.pointSize: plasmoid.configuration.propPointSize
+                font.bold: true
+
+                text: {
+                    return Math.round(weatherData["kp-health"])
+                }
+            }
         }
-        PlasmaComponents.Label {
-            id: sunset
+
+        ColumnLayout {
             Layout.fillWidth: true
+            spacing: 0
 
-            horizontalAlignment: Text.AlignHCenter
+            Kirigami.Icon {
+                source: "documentinfo-symbolic"
+                width: Kirigami.Units.iconSizes.medium
+                height: Kirigami.Units.iconSizes.medium
+                Layout.alignment: Qt.AlignHCenter
+            }
 
-            text: new Date(weatherData["sunset"]).toLocaleTimeString(Qt.locale(), Locale.ShortFormat)
+            PlasmaComponents.Label {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                font.pointSize: plasmoid.configuration.propPointSize
+
+                text: i18n("Info")
+            }
+
+            PlasmaComponents.Label {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                font.pointSize: plasmoid.configuration.propPointSize
+                font.bold: true
+                font.underline: true
+
+                text: i18n("Details")
+
+                PlasmaCore.ToolTipArea {
+                    anchors.fill: parent
+
+                    interactive: true
+
+                    mainItem: Item {
+                        implicitWidth: Kirigami.Units.gridUnit * 15
+                        implicitHeight: solInfoLayout.implicitHeight + Kirigami.Units.gridUnit * 2
+                        
+                        ColumnLayout {
+                            id: solInfoLayout
+
+                            anchors.fill: parent
+
+                            PlasmaComponents.Label {
+                                Layout.fillWidth: true
+                                text: i18nc("See: https://www.swpc.noaa.gov/products/planetary-k-index","Kp-index")
+                                font.bold: true
+                            }
+
+                            PlasmaComponents.Label {
+                                Layout.fillWidth: true
+                                text: i18n("The Kp-index is a measure of geomagnetic activity. It ranges from 0 to 9, with higher values indicating more intense geomagnetic storms. A Kp-index of 0-3 is considered quiet, 4-5 is unsettled, 6-7 is active, and 8-9 is storm-level activity.")
+                                wrapMode: Text.WordWrap
+                            }
+
+                            PlasmaComponents.Label {
+                                Layout.fillWidth: true
+                                text: i18n("Health index")
+                                font.bold: true
+                            }
+
+                            PlasmaComponents.Label {
+                                Layout.fillWidth: true
+                                text: i18n("The health index is a measure of how the solar conditions combined with pressure changes may affect human health. It ranges from 0 to 10+, with higher values indicating more unfavorable conditions for health. A health index of 0-2 is considered comfortable, 3-5 is moderate, and 6+ is unfavorable.")
+                                wrapMode: Text.WordWrap
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

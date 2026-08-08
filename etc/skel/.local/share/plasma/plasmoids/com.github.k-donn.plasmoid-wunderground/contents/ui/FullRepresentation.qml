@@ -1,5 +1,5 @@
 /*
- * Copyright 2025  Kevin Donnelly
+ * Copyright 2026  Kevin Donnelly
  * Copyright 2013  Marco Martin <mart@kde.org>
  *
  * This program is free software; you can redistribute it and/or
@@ -18,13 +18,11 @@
 
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
 import org.kde.plasma.plasmoid
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.components as PlasmaComponents
 import org.kde.plasma.core as PlasmaCore
-import "../code/utils.js" as Utils
-import "lib"
+import "lib" as Lib
 
 ColumnLayout {
     id: fullRoot
@@ -37,7 +35,7 @@ ColumnLayout {
         }
     }
 
-    ConfigBtn {
+    Lib.ConfigBtn {
         id: configBtn
 
         visible: appState == showCONFIG
@@ -72,14 +70,21 @@ ColumnLayout {
             }
         }
 
-        ConfigBtn {
+        Lib.ConfigBtn {
+            Layout.alignment: Qt.AlignHCenter
+        }
+
+        PlasmaComponents.Button {
+            text: i18n("Refresh Weather")
+            icon.name: "view-refresh"
+            onClicked: root.updateWeatherData()
             Layout.alignment: Qt.AlignHCenter
         }
 
         PlasmaComponents.Button {
             id: copyButton
 
-            text: i18nd("plasma_shell_org.kde.plasma.desktop", "Copy to Clipboard")
+            text: i18ndc("plasma_shell_org.kde.plasma.desktop", "@action:button", "Copy to Clipboard")
             icon.name: "edit-copy"
             onClicked: {
                 textArea.selectAll();
